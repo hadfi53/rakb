@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rejoignez les premiers bêta-testeurs de RAKB, la nouvelle façon de louer une voiture au Maroc.">
+  <title>🚗 Rejoignez les premiers à tester RAKB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #fff;
+      --color-text: #181818;
+      --color-primary: #0a2540; /* Bleu foncé */
+      --color-black: #000;
+      --color-border: #e5e7eb;
+      --radius: 12px;
+      --font-main: 'Inter', Arial, Helvetica, sans-serif;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-main);
+      font-size: 18px;
+      min-height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 420px;
+      margin: 48px auto 0 auto;
+      padding: 32px 20px 24px 20px;
+      background: var(--color-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px 0 rgba(10,37,64,0.06);
+      border: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: -1px;
+    }
+    p {
+      color: #444;
+      margin-bottom: 32px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--color-text);
+    }
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      background: #fafbfc;
+      color: var(--color-text);
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      border-color: var(--color-primary);
+      outline: none;
+    }
+    .radio-group {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .radio-group label {
+      font-weight: 400;
+      font-size: 1rem;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    input[type="radio"] {
+      accent-color: var(--color-primary);
+      width: 18px;
+      height: 18px;
+    }
+    .cta-btn {
+      width: 100%;
+      padding: 14px 0;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 1px 6px 0 rgba(10,37,64,0.04);
+      margin-top: 8px;
+    }
+    .cta-btn:hover, .cta-btn:focus {
+      background: var(--color-black);
+      outline: none;
+    }
+    footer {
+      margin-top: auto;
+      padding: 24px 0 12px 0;
+      text-align: center;
+      font-size: 0.98rem;
+      color: #888;
+      background: none;
+    }
+    footer a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    footer a:hover {
+      color: var(--color-black);
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 24px 0 0 0;
+        padding: 18px 6vw 18px 6vw;
+        max-width: 98vw;
+        box-shadow: 0 1px 6px 0 rgba(10,37,64,0.04);
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      form {
+        gap: 14px;
+      }
+      .cta-btn {
+        font-size: 1rem;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🚗 Rejoignez les premiers à tester RAKB</h1>
+    <p>Nous préparons une nouvelle façon de louer une voiture au Maroc. Remplissez le formulaire ci-dessous pour faire partie des premiers utilisateurs.</p>
+    <form id="betaForm" autocomplete="off">
+      <div>
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" name="prenom" required autocomplete="given-name">
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="ville">Ville</label>
+        <input type="text" id="ville" name="ville" required autocomplete="address-level2">
+      </div>
+      <div>
+        <label>Tu veux</label>
+        <div class="radio-group">
+          <label><input type="radio" name="choix" value="louer" required> Louer une voiture</label>
+          <label><input type="radio" name="choix" value="proposer"> Proposer la tienne</label>
+        </div>
+      </div>
+      <button type="submit" class="cta-btn">Je veux tester RAKB</button>
+    </form>
+  </main>
+  <footer>
+    <a href="https://rakb.ma" target="_blank" rel="noopener">← Retour à rakb.ma</a>
+  </footer>
+  <script>
+    document.getElementById('betaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Merci ! On vous contactera bientôt.');
+      this.reset();
+    });
+  </script>
+</body>
+</html> 
