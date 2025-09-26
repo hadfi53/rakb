@@ -1,12 +1,11 @@
 # Rakeb - Site Vitrine
 
-Site vitrine pour Rakeb, une startup de location de voitures peer-to-peer (P2P) et via agences locales au Maroc.
+Site vitrine pour Rakeb, une startup de location de voitures via agences partenaires au Maroc.
 
 ## 📋 À propos du projet
 
 Ce site a été conçu comme une vitrine pour présenter les services de Rakeb, notamment :
-- La location de voitures entre particuliers (P2P)
-- La collaboration avec des agences locales
+- La collaboration avec des agences partenaires de confiance
 - Une plateforme simple et flexible pour la mobilité au Maroc
 
 Le site est construit en HTML/CSS pur (sans JavaScript ni frameworks) pour garantir une performance optimale et une compatibilité maximale.
@@ -30,7 +29,7 @@ Rakeb-Site-Vitrine/
 │
 ├── blog/
 │   ├── roadtrip-marrakech.html  # Article de blog sur les roadtrips
-│   └── conseils-location.html   # Article de blog sur la location P2P
+│   └── conseils-location.html   # Article de blog sur la location de voitures
 │
 └── images/              # Répertoire pour les images (à ajouter)
 ```
@@ -57,7 +56,7 @@ Rakeb-Site-Vitrine/
 
 2. **Articles de blog**
    - Roadtrips autour de Marrakech
-   - Conseils pour une location P2P réussie
+   - Conseils pour une location de voitures réussie
 
 ## 📦 Déploiement sur GitHub Pages
 
