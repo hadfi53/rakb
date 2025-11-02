@@ -359,7 +359,7 @@ const ContractPage = () => {
 
               {/* Footer */}
               <div className="mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
-                <p>RAKeB - Plateforme de location de véhicules</p>
+                <p>RAKB - Plateforme de location de véhicules</p>
                 <p className="mt-1">Ce contrat est régi par le droit marocain.</p>
               </div>
             </CardContent>

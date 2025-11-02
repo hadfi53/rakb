@@ -177,7 +177,7 @@ const ReceiptPage = () => {
               <div className="mb-8 pb-8 border-b-2 border-gray-200">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold text-primary mb-2">RAKeB</h1>
+                    <h1 className="text-3xl font-bold text-primary mb-2">RAKB</h1>
                     <p className="text-gray-600">Reçu de paiement</p>
                   </div>
                   <div className="text-right">
@@ -203,7 +203,7 @@ const ReceiptPage = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <Building2 className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold">RAKeB</h3>
+                    <h3 className="font-semibold">RAKB</h3>
                   </div>
                   <p className="text-sm text-gray-600">
                     {companyInfo.address.full}<br />

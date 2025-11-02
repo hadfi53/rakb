@@ -97,7 +97,7 @@ async function createAgencyAccount() {
         first_name: option === 'existing' ? undefined : 'Agency',
         last_name: option === 'existing' ? undefined : 'Test',
         phone: '+212612345678',
-        company_name: 'RAKeB Test Agency'
+        company_name: 'RAKB Test Agency'
       })
       .eq('id', userId);
 
@@ -114,7 +114,7 @@ async function createAgencyAccount() {
           first_name: 'Agency',
           last_name: 'Test',
           phone: '+212612345678',
-          company_name: 'RAKeB Test Agency'
+          company_name: 'RAKB Test Agency'
         });
 
       if (insertError) {

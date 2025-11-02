@@ -185,7 +185,7 @@ const InvoicePage = () => {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <FileText className="w-8 h-8 text-primary" />
-                      <h1 className="text-3xl font-bold text-primary">RAKeB</h1>
+                      <h1 className="text-3xl font-bold text-primary">RAKB</h1>
                     </div>
                     <p className="text-gray-600">Plateforme de location de véhicules</p>
                     <div className="mt-2 text-sm text-gray-500">
