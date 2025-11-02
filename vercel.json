@@ -1,0 +1,35 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "github": {
+    "silent": true
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://m.stripe.com https://m.stripe.network https://r.stripe.com https://www.googletagmanager.com https://plausible.io blob: data:; style-src 'self' 'unsafe-inline' https://js.stripe.com https://r.stripe.com https://fonts.googleapis.com blob: data:; img-src 'self' data: https: blob: https://r.stripe.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://api.stripe.com https://r.stripe.com https://m.stripe.com https://m.stripe.network https://www.googletagmanager.com https://plausible.io wss://*.supabase.co; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://r.stripe.com https://m.stripe.com https://m.stripe.network; child-src 'self' https://js.stripe.com https://r.stripe.com https://m.stripe.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self';"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+} 

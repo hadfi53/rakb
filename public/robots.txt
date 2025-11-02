@@ -1,0 +1,27 @@
+# robots.txt for RAKB - Car Rental Platform Morocco
+# https://rakb.ma/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private dashboard areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /auth/
+
+# Allow important pages for SEO
+Allow: /
+Allow: /search
+Allow: /cars/
+Allow: /about
+Allow: /how-it-works
+Allow: /contact
+Allow: /legal/
+
+# Sitemap location
+Sitemap: https://rakb.ma/sitemap.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1
+

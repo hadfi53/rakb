@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin" 
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://m.stripe.com https://m.stripe.network https://r.stripe.com https://www.googletagmanager.com https://plausible.io blob: data:; style-src 'self' 'unsafe-inline' https://js.stripe.com https://r.stripe.com https://fonts.googleapis.com blob: data:; img-src 'self' data: https: blob: https://r.stripe.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://api.stripe.com https://r.stripe.com https://m.stripe.com https://m.stripe.network https://www.googletagmanager.com https://plausible.io wss://*.supabase.co; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://r.stripe.com https://m.stripe.com https://m.stripe.network; child-src 'self' https://js.stripe.com https://r.stripe.com https://m.stripe.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self';" 
