@@ -63,20 +63,22 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Bannière d'annonce */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-1 px-3 md:py-2 md:px-4 shadow-sm">
-        <div className="container mx-auto flex items-center justify-center gap-1.5 md:gap-2 text-xs sm:text-sm md:text-base leading-tight">
-          <Smartphone className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-          <span className="whitespace-nowrap">
-            L'application <span className="font-bold">RAKB</span> sera bientôt disponible pour <span className="font-semibold">iPhone</span> et <span className="font-semibold">Android</span>
-          </span>
+      {/* Wrapper fixe pour bannière + header (évite tout espace) */}
+      <div className="fixed top-0 left-0 right-0 z-[60]">
+        {/* Bannière d'annonce */}
+        <div className="bg-primary text-primary-foreground text-center py-1 px-3 md:py-2 md:px-4 shadow-sm">
+          <div className="container mx-auto flex items-center justify-center gap-1.5 md:gap-2 text-xs sm:text-sm md:text-base leading-tight">
+            <Smartphone className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+            <span className="whitespace-nowrap">
+              L'application <span className="font-bold">RAKB</span> sera bientôt disponible pour <span className="font-semibold">iPhone</span> et <span className="font-semibold">Android</span>
+            </span>
+          </div>
         </div>
-      </div>
 
-      {/* Header principal */}
-      <header className="fixed left-0 right-0 z-50 bg-background border-b top-[34px] md:top-[42px]">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <NavLogo />
+        {/* Header principal */}
+        <header className="bg-background border-b">
+          <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <NavLogo />
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-4">
@@ -131,19 +133,20 @@ const Navbar = () => {
           <Menu className="h-6 w-6 md:h-5 md:w-5" />
           <span className="sr-only">Menu</span>
         </Button>
-      </div>
+          </div>
 
-      {/* Mobile Menu */}
-      <MobileMenu
-        user={user}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSignOut={handleSignOut}
-        getInitials={getInitials}
-        unreadCount={unreadCount}
-        onBecomeOwner={handleBecomeOwner}
-      />
-      </header>
+          {/* Mobile Menu */}
+          <MobileMenu
+            user={user}
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            onSignOut={handleSignOut}
+            getInitials={getInitials}
+            unreadCount={unreadCount}
+            onBecomeOwner={handleBecomeOwner}
+          />
+        </header>
+      </div>
     </>
   );
 };
