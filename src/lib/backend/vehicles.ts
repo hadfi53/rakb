@@ -405,7 +405,7 @@ export const getVehicleById = async (vehicleId: string): Promise<{ vehicle: Vehi
       .from(tableName)
       .select(`
         *,
-        owner:profiles!${ownerForeignKey}(id, first_name, last_name, avatar_url, rating)
+        owner:profiles!${ownerForeignKey}(id, first_name, last_name, avatar_url, rating, created_at)
       `)
       .eq('id', vehicleId)
       .single();
@@ -457,6 +457,20 @@ export const getVehicleById = async (vehicleId: string): Promise<{ vehicle: Vehi
       return true;
     });
     
+    // Ensure owner is loaded; if not, fetch from profiles using owner_id/host_id
+    let ownerProfile = (data as any).owner || null;
+    const possibleOwnerId = (data as any).host_id || (data as any).owner_id;
+    if (!ownerProfile && possibleOwnerId) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, avatar_url, rating, created_at')
+        .eq('id', possibleOwnerId)
+        .single();
+      if (!profileError && profile) {
+        ownerProfile = profile;
+      }
+    }
+
     // Handle JSONB features
     let featuresArray: string[] = [];
     if (data.features) {
@@ -506,6 +520,8 @@ export const getVehicleById = async (vehicleId: string): Promise<{ vehicle: Vehi
       bookings_count: bookingCount.count, // Add booking count
       category: data.category || null,
       owner_id: data.host_id || data.owner_id, // Map host_id to owner_id for interface compatibility
+      // Attach resolved owner profile for UI components (OwnerInfo, MobileOwnerCard)
+      owner: ownerProfile,
     } as Vehicle;
 
     return { vehicle: formattedVehicle, error: null };
