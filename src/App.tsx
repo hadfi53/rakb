@@ -36,7 +36,7 @@ function App() {
                 <CookieConsent />
                 <div className="min-h-screen bg-background flex flex-col">
                   <Navbar />
-                  <div className="flex-1 pt-[106px]">
+                  <div className="flex-1 pt-[98px] md:pt-[106px]">
                     <ErrorBoundary>
                       <AppRoutes />
                     </ErrorBoundary>
