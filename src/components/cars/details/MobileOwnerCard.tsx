@@ -1,7 +1,8 @@
 
-import { MessageCircle, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { MessageSquare } from "lucide-react";
 
 interface MobileOwnerCardProps {
   owner?: {
@@ -47,7 +48,7 @@ const MobileOwnerCard = ({ owner }: MobileOwnerCardProps) => {
           </div>
         </div>
         <Button variant="outline" className="w-full mt-4">
-          <MessageCircle className="w-4 h-4 mr-2" />
+          <MessageSquare className="w-4 h-4 mr-2" />
           Contacter le propriétaire
         </Button>
       </CardContent>

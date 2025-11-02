@@ -48,14 +48,14 @@ const ReservationDialog = ({ vehicle, open, onOpenChange }: ReservationDialogPro
   const tomorrow = addDays(today, 1);
   const nextWeek = addDays(today, 7);
   
-  // Récupérer les dates de l'URL
+  // Récupérer les dates de l'URL (format: start|end)
   const searchParams = new URLSearchParams(location.search);
   const datesParam = searchParams.get("dates") || "";
   let initialStartDate = tomorrow;
   let initialEndDate = nextWeek;
   
   if (datesParam) {
-    const datesParts = datesParam.split(":");
+    const datesParts = datesParam.split("|");
     if (datesParts.length === 2) {
       const parsedStartDate = parseISO(datesParts[0]);
       const parsedEndDate = parseISO(datesParts[1]);

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, User, Calendar, Shield } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import SocialShare from "./SocialShare";
 import { getVehicleImageUrl } from "@/lib/utils";
@@ -24,12 +24,13 @@ interface CarCardProps {
 
 const CarCard = ({ car }: CarCardProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [imageError, setImageError] = useState(false);
 
   const handleReservation = (e: React.MouseEvent) => {
     e.stopPropagation(); // Empêche le clic de buller jusqu'à la carte
     window.scrollTo(0, 0);
-    navigate(`/cars/${car.id}`);
+    navigate({ pathname: `/cars/${car.id}`, search: location.search });
   };
 
   const handleCardClick = () => {
@@ -38,7 +39,7 @@ const CarCard = ({ car }: CarCardProps) => {
     console.log("Navigating to car detail page for ID:", car.id);
     }
     window.scrollTo(0, 0);
-    navigate(`/cars/${car.id}`);
+    navigate({ pathname: `/cars/${car.id}`, search: location.search });
   };
 
   const getImageSrc = () => {

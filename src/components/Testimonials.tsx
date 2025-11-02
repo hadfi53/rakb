@@ -6,21 +6,21 @@ const testimonials = [
   {
     name: "Sarah L.",
     role: "Locataire",
-    image: "/placeholder.svg",
+    image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Sarah&gender=female",
     content: "J'ai trouvé la voiture parfaite pour mes vacances à un prix très compétitif. Le processus était simple et le propriétaire très accueillant !",
     rating: 5
   },
   {
     name: "Mohammed A.",
     role: "Propriétaire",
-    image: "/placeholder.svg",
+    image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohammed&gender=male",
     content: "Rakeb m'a permis de rentabiliser ma voiture quand je ne l'utilise pas. La plateforme est vraiment bien pensée et l'équipe très réactive.",
     rating: 5
   },
   {
     name: "Karim B.",
     role: "Locataire",
-    image: "/placeholder.svg",
+    image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Karim&gender=male",
     content: "Une expérience de location super simple et transparente. Je recommande vivement !",
     rating: 5
   }
