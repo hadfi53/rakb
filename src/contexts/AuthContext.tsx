@@ -61,6 +61,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        // If refresh token is invalid or session expired, ensure we land on login
+        if (typeof window !== 'undefined') {
+          const path = window.location.pathname || '';
+          if (!path.startsWith('/auth')) {
+            window.location.href = '/auth/login';
+          }
+        }
       }
       setIsLoading(false);
     });
