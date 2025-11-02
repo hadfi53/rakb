@@ -292,6 +292,8 @@ export const useProfile = () => {
     verifyEmail,
     verifyPhone,
     handleDocumentUpload,
+    // Backward-compatible alias expected by some components
+    uploadDocument: handleDocumentUpload,
     checkDocuments,
     verifyDataIsolation
   };

@@ -3,7 +3,16 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 export type UserRole = 'renter' | 'owner' | 'admin';
 export type Language = 'fr' | 'en' | 'ar';
 export type VerificationStatus = 'pending' | 'verified' | 'rejected';
-export type DocumentType = 'identity' | 'driver_license' | 'proof_of_address';
+export type DocumentType =
+  | 'identity'
+  | 'identity_card'
+  | 'driver_license'
+  | 'proof_of_address'
+  | 'vehicle_registration'
+  | 'insurance'
+  | 'technical_inspection'
+  | 'business_premises_photo'
+  | 'trade_register';
 export type DocumentStatus = 'pending' | 'verified' | 'rejected';
 
 export interface Address {

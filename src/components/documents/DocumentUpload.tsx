@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { useProfile } from '@/hooks/use-profile';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
@@ -38,7 +38,7 @@ const RENTER_DOCUMENTS: Document[] = [
 
 const OWNER_DOCUMENTS: Document[] = [
   {
-    type: 'identity_card',
+    type: 'identity',
     label: 'Pièce d\'identité',
     description: 'Carte d\'identité ou passeport en cours de validité',
     required: true,
@@ -61,11 +61,30 @@ const OWNER_DOCUMENTS: Document[] = [
     description: 'Attestation d\'assurance en cours de validité',
     required: true,
   },
+  {
+    type: 'technical_inspection',
+    label: 'Visite technique',
+    description: 'Contrôle technique à jour',
+    required: true,
+  },
+  {
+    type: 'business_premises_photo',
+    label: 'Photo du local',
+    description: 'Photo de votre local commercial/agence',
+    required: true,
+  },
+  {
+    type: 'trade_register',
+    label: 'Registre de commerce',
+    description: 'Copie originale conforme du registre de commerce',
+    required: true,
+  },
 ];
 
 const DocumentUpload = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { handleDocumentUpload } = useProfile();
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
   const [documentStatus, setDocumentStatus] = useState<Record<string, 'pending' | 'approved' | 'rejected'>>({});
   const [userRole, setUserRole] = useState<'renter' | 'owner'>('renter');
@@ -80,28 +99,8 @@ const DocumentUpload = () => {
 
       setUploading({ ...uploading, [documentType]: true });
       const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user?.id}/${documentType}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('user_documents')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('user_documents')
-        .getPublicUrl(filePath);
-
-      const { error: insertError } = await supabase
-        .from('user_documents')
-        .insert({
-          user_id: user?.id,
-          document_type: documentType,
-          file_url: publicUrl,
-        });
-
-      if (insertError) throw insertError;
+      const ok = await handleDocumentUpload(documentType as DocumentType, file);
+      if (!ok) throw new Error('Upload failed');
 
       setDocumentStatus(prev => ({ ...prev, [documentType]: 'pending' }));
       

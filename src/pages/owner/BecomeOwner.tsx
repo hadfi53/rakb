@@ -206,7 +206,7 @@ const BecomeOwner = () => {
           <div className="text-center mb-16">
             <span className="text-primary font-semibold">Nos avantages</span>
             <h2 className="text-3xl font-bold mt-2 mb-4">
-              Pourquoi choisir Rakeb ?
+              Pourquoi choisir RAKB ?
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Une solution complète pour rentabiliser votre véhicule en toute sérénité

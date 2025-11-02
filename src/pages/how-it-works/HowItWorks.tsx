@@ -94,7 +94,7 @@ const HowItWorks = () => {
         <Card className="mb-16">
           <CardHeader>
             <CardTitle className="text-2xl text-center mb-6">
-              Pourquoi choisir Rakeb ?
+              Pourquoi choisir RAKB ?
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -102,7 +102,7 @@ const HowItWorks = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-1/3">Caractéristiques</TableHead>
-                  <TableHead className="w-1/3 text-primary">Rakeb</TableHead>
+                  <TableHead className="w-1/3 text-primary">RAKB</TableHead>
                   <TableHead className="w-1/3">Agences traditionnelles</TableHead>
                 </TableRow>
               </TableHeader>
@@ -177,7 +177,7 @@ const HowItWorks = () => {
       <div className="bg-gray-50 py-24">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-16">
-            Comment louer une voiture avec Rakeb ?
+            Comment louer une voiture avec RAKB ?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
@@ -206,7 +206,7 @@ const HowItWorks = () => {
       <div className="py-24">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-16">
-            Les avantages Rakeb
+            Les avantages RAKB
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {advantages.map((advantage, index) => (
@@ -253,7 +253,7 @@ const HowItWorks = () => {
             <div className="mt-12">
               <Button asChild size="lg">
                 <Link to="/auth/register">
-                  Rejoignez Rakeb maintenant
+                  Rejoignez RAKB maintenant
                   <ArrowRight className="ml-2" />
                 </Link>
               </Button>

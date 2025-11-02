@@ -21,7 +21,7 @@ interface SocialShareProps {
 
 const SocialShare = memo(({ car, className = "" }: SocialShareProps) => {
   const shareUrl = window.location.href;
-  const shareText = `Découvrez ${car.name} à ${car.price}Dh/jour à ${car.location} sur Rakeb`;
+  const shareText = `Découvrez ${car.name} à ${car.price}Dh/jour à ${car.location} sur RAKB`;
 
   const handleShare = async (platform: string) => {
     const shareUrls: Record<string, string> = {

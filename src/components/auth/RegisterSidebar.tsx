@@ -26,7 +26,7 @@ export const RegisterSidebar = () => {
       {/* Hide benefits on very small screens */}
       <div className={`relative z-10 flex flex-col h-full justify-center px-4 md:px-8 py-6 md:py-12 text-white ${isMobile ? 'hidden sm:flex' : ''}`}>
         <div className="max-w-md mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6">Rejoignez la communauté Rakeb</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6">Rejoignez la communauté RAKB</h2>
           <p className="text-base md:text-lg mb-6 md:mb-8 text-white/80">La plateforme de référence pour la location de voitures au Maroc</p>
           
           <RegisterBenefits />

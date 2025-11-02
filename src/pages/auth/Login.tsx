@@ -78,7 +78,7 @@ const Login = () => {
       
       const welcomeMessage = userRole && roleMessages[userRole] ? roleMessages[userRole] : {
         title: "Connexion réussie",
-        description: "Bienvenue sur Rakeb",
+        description: "Bienvenue sur RAKB",
       };
       
       toast({
@@ -116,7 +116,7 @@ const Login = () => {
             </div>
             <div className="space-y-2">
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                Connexion à Rakeb
+                Connexion à RAKB
               </CardTitle>
               <CardDescription>
                 Pas encore inscrit ?{" "}

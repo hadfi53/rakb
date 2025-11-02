@@ -691,7 +691,7 @@ const ReservationPage = () => {
                 
                 <div className="pt-2">
                   <p className="text-xs text-gray-500 text-center">
-                    En confirmant votre réservation, vous acceptez les conditions générales de Rakeb et la politique d'annulation.
+                    En confirmant votre réservation, vous acceptez les conditions générales de RAKB et la politique d'annulation.
                   </p>
                 </div>
               </CardContent>

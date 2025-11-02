@@ -156,7 +156,7 @@ const Profile = () => {
             // Ensure other fields are not null
             first_name: data.first_name ?? '',
             last_name: data.last_name ?? '',
-            email: data.email ?? '',
+            email: data.email ?? (user?.email ?? ''),
             phone: data.phone ?? '',
             birthdate: data.birthdate ?? ''
           }));

@@ -14,7 +14,7 @@ const testimonials = [
     name: "Mohammed A.",
     role: "Propriétaire",
     image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohammed&gender=male",
-    content: "Rakeb m'a permis de rentabiliser ma voiture quand je ne l'utilise pas. La plateforme est vraiment bien pensée et l'équipe très réactive.",
+    content: "RAKB m'a permis de rentabiliser ma voiture quand je ne l'utilise pas. La plateforme est vraiment bien pensée et l'équipe très réactive.",
     rating: 5
   },
   {
