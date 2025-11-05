@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Star, Upload, X, Camera } from "lucide-react";
 import { RatingStars } from "@/components/ratings/RatingStars";
-import { mockReviewsApi } from "@/lib/mock-reviews-data";
-import { mockBookingApi } from "@/lib/mock-booking-data";
+import { supabase } from "@/lib/supabase";
+import { getBookingById } from "@/lib/backend/bookings";
+import { getVehicleReviews, getVehicleReviewStats, updateVehicleStats } from "@/lib/backend/reviews";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -42,9 +43,11 @@ const SubmitReview = () => {
 
       try {
         setLoading(true);
-        const bookingData = await mockBookingApi.getBookingById(id);
         
-        if (!bookingData) {
+        // Récupérer la réservation depuis Supabase
+        const { booking: bookingData, error: bookingError } = await getBookingById(id || '');
+        
+        if (bookingError || !bookingData) {
           toast({
             variant: "destructive",
             title: "Réservation introuvable",
@@ -55,7 +58,8 @@ const SubmitReview = () => {
         }
 
         // Vérifier que c'est bien la réservation de l'utilisateur et qu'elle est terminée
-        if (bookingData.renter_id !== user.id) {
+        const renterId = bookingData.renter_id || (bookingData as any).user_id;
+        if (renterId !== user.id) {
           toast({
             variant: "destructive",
             title: "Accès refusé",
@@ -65,7 +69,7 @@ const SubmitReview = () => {
           return;
         }
 
-        if (bookingData.status !== 'completed') {
+        if (bookingData.status !== 'completed' && bookingData.status !== 'confirmed') {
           toast({
             variant: "destructive",
             title: "Réservation non terminée",
@@ -75,17 +79,22 @@ const SubmitReview = () => {
           return;
         }
 
-        // Vérifier si un avis existe déjà
-        const existingReviews = await mockReviewsApi.getVehicleReviews(bookingData.vehicle_id);
-        const hasExistingReview = existingReviews.some(r => r.reviewer_id === user.id && r.booking_id === id);
+        // Vérifier si un avis existe déjà pour cette réservation
+        const { data: existingReview } = await supabase
+          .from('reviews')
+          .select('id')
+          .eq('booking_id', id)
+          .eq('user_id', user.id)
+          .single();
         
-        if (hasExistingReview) {
+        if (existingReview) {
           toast({
             variant: "destructive",
             title: "Avis déjà soumis",
             description: "Vous avez déjà laissé un avis pour cette réservation",
           });
-          navigate(`/cars/${bookingData.vehicle_id}/reviews`);
+          const vehicleId = bookingData.vehicle_id || (bookingData as any).car_id;
+          navigate(`/cars/${vehicleId}/reviews`);
           return;
         }
 
@@ -165,29 +174,64 @@ const SubmitReview = () => {
     try {
       setSubmitting(true);
 
-      // Convertir les photos en URLs (dans un vrai système, on les uploaderait)
-      const photoUrls: string[] = photoPreviews;
+      // Récupérer les IDs nécessaires
+      const vehicleId = booking.vehicle_id || (booking as any).car_id;
+      const ownerId = booking.owner_id || (booking as any).host_id;
 
-      // Créer la review
-      await mockReviewsApi.createReview({
-        vehicle_id: booking.vehicle_id,
-        booking_id: id,
-        reviewer_id: user.id,
-        reviewed_user_id: booking.owner_id,
-        rating: overallRating,
-        comment,
-        photos: photoUrls,
-        vehicle_rating: vehicleRating,
-        agency_rating: agencyRating,
-        communication_rating: communicationRating,
-      });
+      if (!vehicleId || !id) {
+        throw new Error('Données de réservation incomplètes');
+      }
+
+      // Vérifier à nouveau si un avis existe déjà (double vérification)
+      const { data: existingReview } = await supabase
+        .from('reviews')
+        .select('id')
+        .eq('booking_id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (existingReview) {
+        toast({
+          variant: "destructive",
+          title: "Avis déjà soumis",
+          description: "Vous avez déjà laissé un avis pour cette réservation",
+        });
+        navigate(`/cars/${vehicleId}/reviews`);
+        return;
+      }
+
+      // Créer la review dans Supabase
+      // Note: La table reviews a booking_id (unique), user_id, car_id, rating, comment
+      // Les ratings détaillés (vehicle_rating, agency_rating, communication_rating) 
+      // peuvent être stockés dans un champ JSONB metadata si nécessaire
+      const { error: reviewError } = await supabase
+        .from('reviews')
+        .insert({
+          booking_id: id,
+          user_id: user.id,
+          car_id: vehicleId,
+          rating: overallRating, // Utiliser la note globale comme rating principal
+          comment: comment || `Véhicule: ${vehicleRating}/5, Agence: ${agencyRating}/5, Communication: ${communicationRating}/5`
+        });
+
+      if (reviewError) {
+        throw reviewError;
+      }
+
+      // Mettre à jour les statistiques du véhicule
+      try {
+        await updateVehicleStats(vehicleId);
+      } catch (statsError) {
+        console.error('Error updating vehicle stats:', statsError);
+        // Ne pas bloquer la soumission si la mise à jour des stats échoue
+      }
 
       toast({
         title: "Avis soumis !",
-        description: "Votre avis a été enregistré et sera publié après modération",
+        description: "Votre avis a été enregistré avec succès",
       });
 
-      navigate(`/cars/${booking.vehicle_id}/reviews`);
+      navigate(`/cars/${vehicleId}/reviews`);
     } catch (err) {
       console.error("Error submitting review:", err);
       toast({

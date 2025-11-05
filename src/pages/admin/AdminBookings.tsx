@@ -13,6 +13,7 @@ import { fr } from "date-fns/locale";
 import { BookingPhotos } from "@/components/admin/BookingPhotos";
 import { useToast } from "@/components/ui/use-toast";
 import { formatCurrency } from "@/lib/utils";
+import { adminService } from "@/lib/admin-service";
 
 export default function AdminBookings() {
   const { user, isLoading: authLoading } = useAuth();
@@ -32,35 +33,33 @@ export default function AdminBookings() {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("bookings")
-        .select(`
-          *,
-          vehicle:vehicles(make, model),
-          renter:profiles!bookings_renter_id_fkey(
-            first_name,
-            last_name,
-            email
-          ),
-          owner:profiles!bookings_owner_id_fkey(
-            first_name,
-            last_name,
-            email
-          )
-        `)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const formattedBookings = (data || []).map(booking => ({
-        ...booking,
+      // Use AdminService instead of direct Supabase query to ensure proper access
+      const bookingsData = await adminService.getBookings();
+      
+      // Format bookings for display
+      const formattedBookings = bookingsData.map(booking => ({
+        id: booking.id,
+        booking_id: booking.booking_id,
+        user_id: booking.user_id,
+        host_id: booking.host_id,
+        car_id: booking.car_id,
+        start_date: booking.start_date,
+        end_date: booking.end_date,
+        total_amount: booking.total_amount,
+        status: booking.status,
+        payment_status: booking.payment_status,
+        created_at: booking.created_at,
         renter: {
-          fullName: `${booking.renter.first_name} ${booking.renter.last_name}`,
-          email: booking.renter.email
+          fullName: booking.renter_name,
+          email: ''
         },
         owner: {
-          fullName: `${booking.owner.first_name} ${booking.owner.last_name}`,
-          email: booking.owner.email
+          fullName: booking.host_name,
+          email: ''
+        },
+        vehicle: {
+          make: booking.vehicle_name.split(' ')[0] || '',
+          model: booking.vehicle_name.split(' ').slice(1).join(' ') || ''
         }
       }));
 

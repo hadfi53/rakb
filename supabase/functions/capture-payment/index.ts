@@ -559,22 +559,54 @@ serve(async (req) => {
 
     // Create payment record
     try {
-      await supabaseClient.from("payments").insert({
+      // Try with provider_payment_id first (new schema)
+      const paymentInsert = {
         booking_id: booking.id,
         user_id: bookingData.user_id,
-        amount: bookingData.total_amount,
+        amount: Math.round(bookingData.total_amount * 100), // Convert to cents
         currency: "MAD",
-        status: "completed",
+        status: "completed" as const,
         provider_payment_id: paymentIntentId,
         provider_payment_data: {
           stripe_payment_intent_id: paymentIntentId,
           amount: paymentIntent.amount,
           currency: paymentIntent.currency,
+          status: paymentIntent.status,
         },
-      });
-    } catch (paymentRecordError) {
+      };
+
+      const { data: paymentData, error: paymentError } = await supabaseClient
+        .from("payments")
+        .insert(paymentInsert)
+        .select()
+        .single();
+
+      if (paymentError) {
+        // If that fails, try with provider/provider_ref (old schema)
+        console.log("Failed with provider_payment_id, trying provider/provider_ref:", paymentError.message);
+        const { error: legacyError } = await supabaseClient
+          .from("payments")
+          .insert({
+            booking_id: booking.id,
+            user_id: bookingData.user_id,
+            amount: Math.round(bookingData.total_amount * 100),
+            currency: "MAD",
+            status: "completed",
+            provider: "stripe",
+            provider_ref: paymentIntentId,
+          });
+
+        if (legacyError) {
+          console.error("Failed to create payment record with both schemas:", legacyError);
+        } else {
+          console.log("✅ Payment record created with legacy schema");
+        }
+      } else {
+        console.log("✅ Payment record created:", paymentData?.id);
+      }
+    } catch (paymentRecordError: any) {
       // Payment succeeded and booking created, so this is non-critical
-      console.error("Failed to create payment record:", paymentRecordError);
+      console.error("Failed to create payment record:", paymentRecordError?.message || paymentRecordError);
     }
 
     // Create notifications

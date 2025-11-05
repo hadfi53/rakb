@@ -7,6 +7,8 @@ import { ArrowLeft, Mail, Lock, Car, Shield, ChevronLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { getDashboardRouteByRole } from "@/utils/role-redirect";
+import { supabase } from "@/lib/supabase";
+import type { User } from '@supabase/supabase-js';
 
 interface LocationState {
   from?: {
@@ -20,7 +22,7 @@ const Login = () => {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, getUserRole } = useAuth();
+  const { signIn, getUserRole, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -34,8 +36,68 @@ const Login = () => {
     try {
       await signIn(formData.email, formData.password);
       
-      // Récupérer le rôle de l'utilisateur pour redirection appropriée
-      const userRole = await getUserRole();
+      // Attendre un peu que l'utilisateur soit bien chargé dans le contexte
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Récupérer l'utilisateur directement depuis Supabase pour avoir les données les plus récentes
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      // Récupérer le rôle de l'utilisateur pour redirection appropriée (avec retries pour laisser le trigger créer le profil)
+      const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
+      
+      // Fonction pour vérifier les métadonnées utilisateur comme fallback
+      const checkMetadataRole = (currentUser: User | null): 'owner' | 'renter' | 'admin' | null => {
+        if (!currentUser) return null;
+        const metadataRole = currentUser.user_metadata?.role as string | undefined;
+        if (metadataRole === 'host' || metadataRole === 'proprietaire' || metadataRole === 'owner') {
+          return 'owner';
+        }
+        if (metadataRole === 'locataire' || metadataRole === 'renter') {
+          return 'renter';
+        }
+        if (metadataRole === 'admin') {
+          return 'admin';
+        }
+        return null;
+      };
+      
+      let userRole = await getUserRole();
+      
+      // Si pas de rôle depuis la base, vérifier les métadonnées de l'utilisateur actuel
+      if (!userRole && currentUser) {
+        userRole = checkMetadataRole(currentUser);
+      }
+      
+      // Si toujours pas de rôle, faire des retries avec plus de tentatives et délais plus longs
+      if (!userRole) {
+        for (let attempt = 0; attempt < 6; attempt++) {
+          await wait(500 * (attempt + 1)); // 500ms, 1000ms, 1500ms, 2000ms, 2500ms, 3000ms
+          userRole = await getUserRole();
+          
+          // Si toujours pas de rôle depuis la base, réessayer les métadonnées
+          if (!userRole && currentUser) {
+            userRole = checkMetadataRole(currentUser);
+          }
+          
+          // Si toujours pas de rôle, récupérer l'utilisateur à jour depuis Supabase
+          if (!userRole) {
+            const { data: { user: updatedUser } } = await supabase.auth.getUser();
+            if (updatedUser) {
+              userRole = checkMetadataRole(updatedUser);
+            }
+          }
+          
+          if (userRole) break;
+        }
+      }
+      
+      // Dernière tentative: vérifier les métadonnées une dernière fois avec l'utilisateur le plus récent
+      if (!userRole) {
+        const { data: { user: finalUser } } = await supabase.auth.getUser();
+        if (finalUser) {
+          userRole = checkMetadataRole(finalUser);
+        }
+      }
       
       // Vérifier que l'utilisateur a un rôle défini
       if (!userRole) {

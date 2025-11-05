@@ -580,10 +580,10 @@ export const acceptBookingRequest = async (
   ownerId: string
 ): Promise<{ booking: Booking | null; error: any }> => {
   try {
-    // Verify owner has permission
+    // Verify owner has permission and get booking details
     const { data: bookingData, error: fetchError } = await supabase
       .from('bookings')
-      .select('host_id, status')
+      .select('host_id, status, user_id, car_id, start_date, end_date, total_amount, pickup_location, dropoff_location')
       .eq('id', bookingId)
       .single();
 
@@ -600,7 +600,63 @@ export const acceptBookingRequest = async (
     }
 
     // Update status to confirmed
-    return await updateBookingStatus(bookingId, 'confirmed', ownerId);
+    const result = await updateBookingStatus(bookingId, 'confirmed', ownerId);
+
+    // Send confirmation email via Resend if booking was successfully confirmed
+    if (result.booking && result.booking.status === 'confirmed') {
+      try {
+        // Get renter and vehicle details for email
+        const { data: renterProfile } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', bookingData.user_id)
+          .single();
+
+        const { data: carData } = await supabase
+          .from('cars')
+          .select('make, model, year, brand')
+          .eq('id', bookingData.car_id)
+          .single();
+
+        // Get renter email from auth.users
+        const { data: renterEmailData } = await supabase
+          .rpc('get_user_emails', { user_ids: [bookingData.user_id] });
+
+        const renterEmail = renterEmailData?.[0]?.email;
+        const renterName = renterProfile 
+          ? `${renterProfile.first_name || ''} ${renterProfile.last_name || ''}`.trim()
+          : 'Locataire';
+        
+        const vehicleName = carData 
+          ? `${carData.make || carData.brand || ''} ${carData.model || ''} ${carData.year || ''}`.trim()
+          : 'Véhicule';
+
+        if (renterEmail) {
+          // Send email via Edge Function (which uses Resend)
+          await supabase.functions.invoke('send-event-email', {
+            body: {
+              event_type: 'booking_confirmed',
+              recipient_email: renterEmail,
+              recipient_name: renterName,
+              data: {
+                booking_id: bookingId,
+                vehicle_name: vehicleName,
+                start_date: bookingData.start_date ? new Date(bookingData.start_date).toLocaleDateString('fr-FR') : '',
+                end_date: bookingData.end_date ? new Date(bookingData.end_date).toLocaleDateString('fr-FR') : '',
+                total_price: bookingData.total_amount || 0,
+                pickup_location: bookingData.pickup_location || '',
+                return_location: bookingData.dropoff_location || bookingData.pickup_location || '',
+              },
+            },
+          });
+        }
+      } catch (emailError) {
+        // Log error but don't fail the booking confirmation
+        console.error('Error sending booking confirmation email:', emailError);
+      }
+    }
+
+    return result;
   } catch (error) {
     console.error('Accept booking request error:', error);
     return { booking: null, error };

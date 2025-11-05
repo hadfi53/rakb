@@ -20,6 +20,7 @@ const InvoicePage = () => {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState<any>(null);
   const [payment, setPayment] = useState<any>(null);
+  const [invoice, setInvoice] = useState<any>(null);
   const [vehicle, setVehicle] = useState<any>(null);
   const [owner, setOwner] = useState<any>(null);
   const [renter, setRenter] = useState<any>(null);
@@ -50,26 +51,67 @@ const InvoicePage = () => {
         setBooking(bookingData);
 
         // Get payment data
-        const { data: paymentData } = await supabase
+        const paidStatuses = ['completed', 'succeeded', 'paid', 'charged'];
+        const { data: paymentRows, error: paymentError } = await supabase
           .from("payments")
           .select("*")
           .eq("booking_id", id)
-          .eq("status", "completed")
+          .in('status', paidStatuses as any)
           .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
+          .limit(1);
 
-        if (paymentData) setPayment(paymentData);
+        if (!paymentError && Array.isArray(paymentRows) && paymentRows.length > 0) {
+          setPayment(paymentRows[0]);
+        }
+        // Ensure invoice row exists and fetch invoice_number
+        {
+          const { data: existingInvoice } = await supabase
+            .from('invoices')
+            .select('*')
+            .eq('booking_id', id)
+            .maybeSingle?.() ?? { data: null };
+
+          if (existingInvoice) {
+            setInvoice(existingInvoice);
+          } else {
+            const generatedNumber = paymentRows && paymentRows[0]?.created_at
+              ? `INV-${bookingData.id.slice(0,8).toUpperCase()}-${new Date(paymentRows[0].created_at).getTime().toString(36).toUpperCase()}`
+              : `INV-${bookingData.id.slice(0,8).toUpperCase()}`;
+            const { data: inserted } = await supabase
+              .from('invoices')
+              .insert({
+                booking_id: bookingData.id,
+                owner_id: bookingData.owner_id,
+                renter_id: bookingData.renter_id,
+                invoice_number: generatedNumber,
+                total_amount: bookingData.total_amount || bookingData.total_price || null,
+              })
+              .select('*')
+              .maybeSingle?.() ?? { data: null };
+            if (inserted) setInvoice(inserted);
+          }
+        }
 
         // Get vehicle details
         if (bookingData.vehicle_id) {
-          const { data: vehicleData } = await supabase
+          // Tenter d'abord sur 'vehicles'
+          const { data: vehicleData, error: vehicleErr } = await supabase
             .from("vehicles")
             .select("*")
             .eq("id", bookingData.vehicle_id)
-            .single();
+            .maybeSingle?.() ?? { data: null, error: null };
 
-          if (vehicleData) setVehicle(vehicleData);
+          if (vehicleData) {
+            setVehicle(vehicleData);
+          } else {
+            // Fallback sur 'cars'
+            const { data: carData } = await supabase
+              .from("cars")
+              .select("*")
+              .eq("id", bookingData.vehicle_id)
+              .maybeSingle?.() ?? { data: null };
+            if (carData) setVehicle(carData);
+          }
         }
 
         // Get owner details
@@ -140,7 +182,10 @@ const InvoicePage = () => {
     );
   }
 
-  const invoiceNumber = `INV-${booking.id.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+  // Numéro de facture déterministe basé sur l'ID de réservation et la date de paiement si disponible
+  const invoiceNumber = invoice?.invoice_number || (payment?.created_at
+    ? `INV-${booking.id.slice(0, 8).toUpperCase()}-${new Date(payment.created_at).getTime().toString(36).toUpperCase()}`
+    : `INV-${booking.id.slice(0, 8).toUpperCase()}`);
   const issueDate = booking.created_at || new Date().toISOString();
   const dueDate = payment?.created_at || booking.created_at || new Date().toISOString();
   
@@ -150,8 +195,8 @@ const InvoicePage = () => {
   const insuranceFee = booking.insurance_fee || 0;
   const deposit = booking.caution_amount || booking.deposit_amount || 0;
   const subtotal = basePrice + insuranceFee;
-  const tax = subtotal * 0.18; // TVA 18%
-  const totalAmount = booking.total_amount || booking.total_price || (subtotal + serviceFee + tax);
+  // Suppression TVA du calcul
+  const totalAmount = booking.total_amount || booking.total_price || (subtotal + serviceFee);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -311,15 +356,7 @@ const InvoicePage = () => {
                         }).format(serviceFee)}
                       </td>
                     </tr>
-                    <tr>
-                      <td className="px-4 py-3">TVA (18%)</td>
-                      <td className="px-4 py-3 text-right">
-                        {new Intl.NumberFormat("fr-MA", {
-                          style: "currency",
-                          currency: "MAD",
-                        }).format(tax)}
-                      </td>
-                    </tr>
+                    {/* TVA retirée */}
                     {deposit > 0 && (
                       <tr>
                         <td className="px-4 py-3">Caution (remboursable)</td>
@@ -346,20 +383,22 @@ const InvoicePage = () => {
                 </table>
               </div>
 
-              {/* Payment Status */}
+              {/* Payment Status */
+              // Afficher Payé uniquement si un paiement 'completed' est trouvé pour cette réservation
+              }
               <div className="mb-8">
                 <div
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
-                    payment?.status === "completed" || booking.payment_status === "completed"
+                    payment?.status === "completed"
                       ? "bg-green-100 text-green-800"
                       : "bg-yellow-100 text-yellow-800"
                   }`}
                 >
-                  {payment?.status === "completed" || booking.payment_status === "completed" ? (
+                  {payment?.status === "completed" ? (
                     <CheckCircle className="w-4 h-4" />
                   ) : null}
                   <span className="font-semibold">
-                    {payment?.status === "completed" || booking.payment_status === "completed"
+                    {payment?.status === "completed"
                       ? "Payé"
                       : "En attente de paiement"}
                   </span>

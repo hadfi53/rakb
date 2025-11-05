@@ -49,17 +49,16 @@ const ReceiptPage = () => {
         setBooking(bookingData);
 
         // Get payment data from payments table
-        const { data: paymentData, error: paymentError } = await supabase
+        const paidStatuses = ['completed', 'succeeded', 'paid', 'charged'];
+        const { data: paymentRows } = await supabase
           .from("payments")
           .select("*")
           .eq("booking_id", id)
-          .eq("status", "completed")
+          .in('status', paidStatuses as any)
           .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
-
-        if (!paymentError && paymentData) {
-          setPayment(paymentData);
+          .limit(1);
+        if (Array.isArray(paymentRows) && paymentRows.length > 0) {
+          setPayment(paymentRows[0]);
         }
 
         // Get vehicle details if not included
@@ -68,9 +67,17 @@ const ReceiptPage = () => {
             .from("vehicles")
             .select("*")
             .eq("id", bookingData.vehicle_id)
-            .single();
-
-          if (vehicleData) setVehicle(vehicleData);
+            .maybeSingle?.() ?? { data: null };
+          if (vehicleData) {
+            setVehicle(vehicleData);
+          } else {
+            const { data: carData } = await supabase
+              .from("cars")
+              .select("*")
+              .eq("id", bookingData.vehicle_id)
+              .maybeSingle?.() ?? { data: null };
+            if (carData) setVehicle(carData);
+          }
         }
 
         // Get owner details
@@ -192,9 +199,11 @@ const ReceiptPage = () => {
 
               {/* Status Badge */}
               <div className="mb-6 flex justify-end">
-                <div className="flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="font-semibold">Paiement confirmé</span>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                  payment?.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {payment?.status === 'completed' && <CheckCircle className="w-4 h-4" />}
+                  <span className="font-semibold">{payment?.status === 'completed' ? 'Paiement confirmé' : 'En attente de paiement'}</span>
                 </div>
               </div>
 

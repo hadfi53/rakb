@@ -214,12 +214,12 @@ export const useProfile = () => {
     }
   };
 
-  const handleDocumentUpload = async (type: DocumentType, file: File) => {
+  const handleDocumentUpload = async (type: DocumentType, file: File, verificationType?: 'tenant' | 'host') => {
     try {
       setUploading(true);
       if (!user) return null;
 
-      const { document, error } = await profilesBackend.uploadDocument(user.id, type, file);
+      const { document, error } = await profilesBackend.uploadDocument(user.id, type, file, verificationType);
 
       if (error || !document) {
         throw error || new Error('Failed to upload document');
@@ -247,29 +247,19 @@ export const useProfile = () => {
     }
   };
 
-  const checkDocuments = async () => {
+  const checkDocuments = async (verificationType?: 'tenant' | 'host') => {
     try {
       if (!user) return;
 
-      const { documents: docs, error } = await profilesBackend.getDocuments(user.id);
+      const { documents: docs, error } = await profilesBackend.getDocuments(user.id, verificationType);
       
       if (error) {
         console.error('Error fetching documents:', error);
         return;
       }
 
-      setDocuments(docs.map((doc: any) => ({
-        id: doc.id,
-        user_id: doc.user_id,
-        document_type: doc.type as any,
-        file_path: doc.file_url,
-        file_url: doc.file_url,
-        file_name: doc.file_url.split('/').pop() || 'document',
-        status: doc.verified ? 'verified' : 'pending',
-        submitted_at: doc.created_at,
-        created_at: doc.created_at,
-        updated_at: doc.updated_at || doc.created_at
-      })));
+      // Les documents sont déjà mappés dans getDocuments
+      setDocuments(docs || []);
     } catch (error) {
       console.error('Error fetching documents:', error);
     }

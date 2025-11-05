@@ -22,6 +22,7 @@ const ContractPage = () => {
   const [owner, setOwner] = useState<any>(null);
   const [renter, setRenter] = useState<any>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -49,15 +50,50 @@ const ContractPage = () => {
         setIsOwner(bookingData.owner_id === user.id);
         setBooking(bookingData);
 
+        // Get payment status (auto-sign contract if completed)
+        {
+          const paidStatuses = ['completed', 'succeeded', 'paid', 'charged'];
+          const { data: paymentRows } = await supabase
+            .from('payments')
+            .select('*')
+            .eq('booking_id', id)
+            .in('status', paidStatuses as any)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          if (Array.isArray(paymentRows) && paymentRows.length > 0) {
+            setPaymentCompleted(true);
+            // Auto-sign if not already signed
+            if (!bookingData.pickup_contract_signed && !bookingData.return_contract_signed) {
+              try {
+                await supabase
+                  .from('bookings')
+                  .update({ pickup_contract_signed: true, updated_at: new Date().toISOString() })
+                  .eq('id', id);
+                bookingData.pickup_contract_signed = true;
+              } catch {}
+            }
+          }
+        }
+
         // Get vehicle details
         if (bookingData.vehicle_id) {
+          // Tenter 'vehicles' puis fallback 'cars'
           const { data: vehicleData } = await supabase
             .from("vehicles")
             .select("*")
             .eq("id", bookingData.vehicle_id)
-            .single();
+            .maybeSingle?.() ?? { data: null };
 
-          if (vehicleData) setVehicle(vehicleData);
+          if (vehicleData) {
+            setVehicle(vehicleData);
+          } else {
+            const { data: carData } = await supabase
+              .from("cars")
+              .select("*")
+              .eq("id", bookingData.vehicle_id)
+              .maybeSingle?.() ?? { data: null };
+            if (carData) setVehicle(carData);
+          }
         }
 
         // Get owner details
@@ -138,6 +174,12 @@ const ContractPage = () => {
     window.print();
   };
 
+  const getInitials = (first?: string, last?: string) => {
+    const a = (first || '').trim()[0] || '';
+    const b = (last || '').trim()[0] || '';
+    return (a + b).toUpperCase();
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -187,7 +229,7 @@ const ContractPage = () => {
                 <Printer className="w-4 h-4 mr-2" />
                 Imprimer
               </Button>
-              {!booking.pickup_contract_signed && !booking.return_contract_signed && (
+              {!booking.pickup_contract_signed && !booking.return_contract_signed && !paymentCompleted && (
                 <Button onClick={handleSignContract}>
                   <PenTool className="w-4 h-4 mr-2" />
                   Signer le contrat
@@ -339,7 +381,9 @@ const ContractPage = () => {
                   <div className="grid grid-cols-2 gap-8">
                     <div className="text-center">
                       <p className="font-semibold mb-4">Le Propriétaire</p>
-                      <div className="h-20 border-b border-gray-300 mb-2"></div>
+                      <div className="h-20 border-b border-gray-300 mb-2 flex items-center justify-center text-gray-400 italic">
+                        {getInitials(owner.first_name, owner.last_name)}
+                      </div>
                       <p className="text-sm">{owner.first_name} {owner.last_name}</p>
                       <p className="text-xs text-gray-500">
                         Date: {format(new Date(), "PPP", { locale: fr })}
@@ -347,7 +391,9 @@ const ContractPage = () => {
                     </div>
                     <div className="text-center">
                       <p className="font-semibold mb-4">Le Locataire</p>
-                      <div className="h-20 border-b border-gray-300 mb-2"></div>
+                      <div className="h-20 border-b border-gray-300 mb-2 flex items-center justify-center text-gray-400 italic">
+                        {getInitials(renter.first_name, renter.last_name)}
+                      </div>
                       <p className="text-sm">{renter.first_name} {renter.last_name}</p>
                       <p className="text-xs text-gray-500">
                         Date: {format(new Date(), "PPP", { locale: fr })}

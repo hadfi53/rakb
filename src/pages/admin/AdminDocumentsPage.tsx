@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { mockAdminApi, DocumentReview } from "@/lib/mock-admin-data";
+import { adminService, DocumentReview } from "@/lib/admin-service";
+import { supabase } from "@/lib/supabase";
 import { CheckCircle, XCircle, FileText, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import {
   Dialog,
   DialogContent,
@@ -33,19 +35,23 @@ const AdminDocumentsPage = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  useEffect(() => {
     const loadDocuments = async () => {
       if (!user) return;
 
       try {
         setLoading(true);
         const data = filter === 'pending'
-          ? await mockAdminApi.getPendingDocuments()
-          : await mockAdminApi.getAllDocumentReviews();
+          ? await adminService.getPendingDocuments()
+          : await adminService.getAllDocumentReviews();
         
         const filtered = filter !== 'all' && filter !== 'pending'
-          ? data.filter(d => d.status === filter)
+          ? data.filter(d => {
+              if (filter === 'approved') return d.verification_status === 'approved';
+              if (filter === 'rejected') return d.verification_status === 'rejected';
+              return true;
+            })
           : data;
         
         setDocuments(filtered);
@@ -57,7 +63,36 @@ const AdminDocumentsPage = () => {
       }
     };
 
+  useEffect(() => {
     loadDocuments();
+  }, [user, filter]);
+
+  // Set up real-time subscription for document changes
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('admin-documents-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'identity_documents'
+        },
+        () => {
+          loadDocuments();
+        }
+      )
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, [user, filter]);
 
   const handleApprove = async (documentId: string) => {
@@ -65,12 +100,9 @@ const AdminDocumentsPage = () => {
 
     try {
       setProcessing(true);
-      await mockAdminApi.approveDocument(documentId, user.id);
+      await adminService.approveDocument(documentId, user.id);
       toast.success('Document approuvé avec succès');
-      const updated = filter === 'pending'
-        ? await mockAdminApi.getPendingDocuments()
-        : await mockAdminApi.getAllDocumentReviews();
-      setDocuments(filteredDocuments(updated, filter));
+      await loadDocuments();
     } catch (error) {
       console.error('Error approving document:', error);
       toast.error('Erreur lors de l\'approbation');
@@ -87,15 +119,12 @@ const AdminDocumentsPage = () => {
 
     try {
       setProcessing(true);
-      await mockAdminApi.rejectDocument(selectedDocument.id, user.id, rejectReason);
+      await adminService.rejectDocument(selectedDocument.id, user.id, rejectReason);
       toast.success('Document rejeté');
       setRejectDialogOpen(false);
       setRejectReason('');
       setSelectedDocument(null);
-      const updated = filter === 'pending'
-        ? await mockAdminApi.getPendingDocuments()
-        : await mockAdminApi.getAllDocumentReviews();
-      setDocuments(filteredDocuments(updated, filter));
+      await loadDocuments();
     } catch (error) {
       console.error('Error rejecting document:', error);
       toast.error('Erreur lors du rejet');
@@ -106,16 +135,25 @@ const AdminDocumentsPage = () => {
 
   const filteredDocuments = (docs: DocumentReview[], filterType: typeof filter) => {
     if (filterType === 'all' || filterType === 'pending') return docs;
-    return docs.filter(d => d.status === filterType);
+    return docs.filter(d => {
+      if (filterType === 'approved') return d.verification_status === 'approved';
+      if (filterType === 'rejected') return d.verification_status === 'rejected';
+      return true;
+    });
   };
 
   const getDocumentTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       driver_license: 'Permis de conduire',
+      identity: 'Pièce d\'identité',
       identity_card: 'Carte d\'identité',
       bank_details: 'Détails bancaires',
       vehicle_registration: 'Carte grise',
-      insurance: 'Assurance'
+      insurance: 'Assurance',
+      technical_inspection: 'Visite technique',
+      trade_register: 'Registre de commerce',
+      business_premises_photo: 'Photo du local',
+      proof_of_address: 'Justificatif de domicile'
     };
     return labels[type] || type;
   };
@@ -165,13 +203,13 @@ const AdminDocumentsPage = () => {
                     <CardTitle className="text-lg">{getDocumentTypeLabel(document.document_type)}</CardTitle>
                     <Badge
                       variant={
-                        document.status === 'approved' ? 'success' :
-                        document.status === 'rejected' ? 'destructive' :
+                        document.verification_status === 'approved' ? 'success' :
+                        document.verification_status === 'rejected' ? 'destructive' :
                         'warning'
                       }
                     >
-                      {document.status === 'pending' ? 'En attente' :
-                       document.status === 'approved' ? 'Approuvé' :
+                      {document.verification_status === 'pending' || document.verification_status === 'under_review' ? 'En attente' :
+                       document.verification_status === 'approved' ? 'Approuvé' :
                        'Rejeté'}
                     </Badge>
                   </div>
@@ -193,7 +231,7 @@ const AdminDocumentsPage = () => {
                       <FileText className="w-4 h-4 mr-2" />
                       Voir
                     </Button>
-                    {document.status === 'pending' && (
+                    {(document.verification_status === 'pending' || document.verification_status === 'under_review') && (
                       <>
                         <Button
                           variant="default"

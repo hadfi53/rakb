@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Car, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft, FileText, Camera, DollarSign, MapPin, Shield, Eye } from "lucide-react";
+import { ArrowLeft, Car, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft, FileText, Camera, DollarSign, MapPin, Shield, Eye, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useVehicle } from "@/hooks/use-vehicle";
@@ -12,6 +12,7 @@ import { VehicleFormData } from "@/types/vehicle";
 import { VerificationBanner } from "@/components/VerificationBanner";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { uploadDocument, getDocuments } from "@/lib/backend/profiles";
 
 // Import existing components
 import ImageUpload from "./components/ImageUpload";
@@ -27,8 +28,10 @@ interface RequiredDocument {
   type: string;
   label: string;
   uploaded: boolean;
+  uploading?: boolean;
   file?: File;
   url?: string;
+  document_id?: string;
 }
 
 const STEPS = [
@@ -72,6 +75,8 @@ const AddCar = () => {
     { type: 'insurance', label: 'Assurance', uploaded: false },
     { type: 'technical_inspection', label: 'Contrôle technique', uploaded: false },
   ]);
+  
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -143,6 +148,42 @@ const AddCar = () => {
     checkRole();
   }, [user, getUserRole, navigate, toast]);
 
+  // Load existing documents when component mounts
+  useEffect(() => {
+    const loadExistingDocuments = async () => {
+      if (!user) return;
+
+      try {
+        const { documents, error } = await getDocuments(user.id, 'host');
+        
+        if (error) {
+          console.error('Error loading existing documents:', error);
+          return;
+        }
+
+        if (documents && documents.length > 0) {
+          // Update requiredDocuments with existing documents
+          setRequiredDocuments(prev => prev.map(doc => {
+            const existingDoc = documents.find(d => d.document_type === doc.type);
+            if (existingDoc) {
+              return {
+                ...doc,
+                uploaded: true,
+                url: existingDoc.document_url,
+                document_id: existingDoc.id,
+              };
+            }
+            return doc;
+          }));
+        }
+      } catch (error) {
+        console.error('Error in loadExistingDocuments:', error);
+      }
+    };
+
+    loadExistingDocuments();
+  }, [user]);
+
   const progress = (currentStep / 7) * 100;
 
   const validateStep = (step: VehicleStep): boolean => {
@@ -159,11 +200,22 @@ const AddCar = () => {
         return true;
       case 2:
         const allDocsUploaded = requiredDocuments.every(doc => doc.uploaded);
+        const isUploading = requiredDocuments.some(doc => doc.uploading);
+        
+        if (isUploading) {
+          toast({
+            variant: "default",
+            title: "Téléversement en cours",
+            description: "Veuillez attendre que le téléversement se termine",
+          });
+          return false;
+        }
+        
         if (!allDocsUploaded) {
           toast({
             variant: "destructive",
             title: "Documents manquants",
-            description: "Tous les documents obligatoires doivent être téléchargés",
+            description: "Veuillez téléverser tous les documents obligatoires avant de continuer",
           });
           return false;
         }
@@ -223,16 +275,120 @@ const AddCar = () => {
     }
   };
 
-  const handleDocumentUpload = (type: string, file: File) => {
+  const handleDocumentUpload = async (type: string, file: File) => {
+    console.log('handleDocumentUpload called:', { type, fileName: file.name, fileSize: file.size, fileType: file.type });
+    
+    if (!user) {
+      console.error('No user found');
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Vous devez être connecté pour téléverser des documents",
+      });
+      return;
+    }
+
+    console.log('User found:', user.id);
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      console.error('File too large:', file.size);
+      toast({
+        variant: "destructive",
+        title: "Fichier trop volumineux",
+        description: "La taille maximale autorisée est de 10MB",
+      });
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      console.error('Invalid file type:', file.type);
+      toast({
+        variant: "destructive",
+        title: "Type de fichier non supporté",
+        description: `Format "${file.type}" non accepté. Formats acceptés : JPG, PNG, PDF`,
+      });
+      return;
+    }
+
+    console.log('File validation passed, starting upload...');
+
+    // Set uploading state
     setRequiredDocuments(prev => prev.map(doc => 
       doc.type === type 
-        ? { ...doc, uploaded: true, file, url: URL.createObjectURL(file) }
+        ? { ...doc, uploading: true }
         : doc
     ));
+
+    try {
+      console.log('Calling uploadDocument with:', { userId: user.id, type, verificationType: 'host' });
+      
+      // Upload document to Supabase using the uploadDocument function
+      const { document, error: uploadError } = await uploadDocument(
+        user.id,
+        type,
+        file,
+        'host' // verification_type for agency/owner documents
+      );
+
+      console.log('uploadDocument response:', { document, error: uploadError });
+
+      if (uploadError) {
+        console.error('Document upload error:', uploadError);
+        throw uploadError;
+      }
+
+      if (!document) {
+        console.error('No document returned from uploadDocument');
+        throw new Error('Document upload failed - no document returned');
+      }
+
+      console.log('Document uploaded successfully:', document.id);
+
+      // Update state with uploaded document info
+      setRequiredDocuments(prev => prev.map(doc => 
+        doc.type === type 
+          ? { 
+              ...doc, 
+              uploaded: true, 
+              file, 
+              url: document.document_url,
+              document_id: document.id,
+              uploading: false
+            }
+          : doc
+      ));
+
     toast({
-      title: "Document téléchargé",
-      description: "Le document a été ajouté avec succès",
+        title: "Document téléversé",
+        description: "Le document a été téléversé avec succès et sera vérifié par notre équipe",
     });
+    } catch (error: any) {
+      console.error('Error uploading document:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint,
+      });
+      
+      // Reset uploading state on error
+      setRequiredDocuments(prev => prev.map(doc => 
+        doc.type === type 
+          ? { ...doc, uploading: false }
+          : doc
+      ));
+
+      const errorMessage = error?.message || error?.details || error?.hint || "Une erreur est survenue lors du téléversement. Veuillez réessayer.";
+      
+      toast({
+        variant: "destructive",
+        title: "Erreur de téléversement",
+        description: errorMessage,
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -475,21 +631,55 @@ const AddCar = () => {
                               <CheckCircle2 className="w-3 h-3 mr-1" />
                               Téléchargé
                             </Badge>
+                          ) : doc.uploading ? (
+                            <Button variant="outline" size="sm" disabled>
+                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                              Téléversement...
+                            </Button>
                           ) : (
-                            <label className="cursor-pointer">
+                            <>
                               <input
+                                ref={(el) => { fileInputRefs.current[doc.type] = el; }}
+                                id={`file-upload-${doc.type}`}
                                 type="file"
                                 className="hidden"
                                 accept=".pdf,.jpg,.jpeg,.png"
                                 onChange={(e) => {
                                   const file = e.target.files?.[0];
-                                  if (file) handleDocumentUpload(doc.type, file);
+                                  console.log('Input onChange triggered:', { file, type: doc.type });
+                                  if (file) {
+                                    console.log('File selected:', file.name, file.type, file.size);
+                                    handleDocumentUpload(doc.type, file).catch((error) => {
+                                      console.error('Error in handleDocumentUpload:', error);
+                                    });
+                                    // Reset input so same file can be uploaded again if needed
+                                    e.target.value = '';
+                                  } else {
+                                    console.log('No file selected');
+                                  }
                                 }}
+                                disabled={doc.uploading}
                               />
-                              <Button variant="outline" size="sm" as="span">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  console.log('Button clicked, triggering file input for:', doc.type);
+                                  const input = fileInputRefs.current[doc.type];
+                                  if (input) {
+                                    input.click();
+                                  } else {
+                                    console.error('File input ref not found for:', doc.type);
+                                  }
+                                }}
+                                disabled={doc.uploading}
+                                type="button"
+                              >
                                 Télécharger
                               </Button>
-                            </label>
+                            </>
                           )}
                         </div>
                       </div>

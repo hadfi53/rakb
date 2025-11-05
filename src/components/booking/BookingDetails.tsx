@@ -58,6 +58,7 @@ export const BookingDetails = ({ booking, userRole, onAction }: BookingDetailsPr
   const { toast } = useToast();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
+  const resolvedBookingId = (booking as any)?.id || (booking as any)?.booking_id;
   
   // Formater les dates
   const formattedStartDate = format(new Date(booking.startDate), 'PPP', { locale: fr });
@@ -573,7 +574,13 @@ export const BookingDetails = ({ booking, userRole, onAction }: BookingDetailsPr
                   <Button
                     variant="outline"
                     className="flex items-center justify-center gap-2"
-                    onClick={() => navigate(`/bookings/${booking.id}/invoice`)}
+                    onClick={() => {
+                      if (!resolvedBookingId) {
+                        toast({ variant: "destructive", title: "ID manquant", description: "Impossible d'ouvrir la facture: identifiant indisponible." });
+                        return;
+                      }
+                      navigate(`/bookings/${encodeURIComponent(resolvedBookingId)}/invoice`);
+                    }}
                   >
                     <FileText className="h-4 w-4" />
                     Facture
@@ -581,7 +588,13 @@ export const BookingDetails = ({ booking, userRole, onAction }: BookingDetailsPr
                   <Button
                     variant="outline"
                     className="flex items-center justify-center gap-2"
-                    onClick={() => navigate(`/bookings/${booking.id}/receipt`)}
+                    onClick={() => {
+                      if (!resolvedBookingId) {
+                        toast({ variant: "destructive", title: "ID manquant", description: "Impossible d'ouvrir le reçu: identifiant indisponible." });
+                        return;
+                      }
+                      navigate(`/bookings/${encodeURIComponent(resolvedBookingId)}/receipt`);
+                    }}
                   >
                     <Receipt className="h-4 w-4" />
                     Reçu
@@ -589,7 +602,13 @@ export const BookingDetails = ({ booking, userRole, onAction }: BookingDetailsPr
                   <Button
                     variant="outline"
                     className="flex items-center justify-center gap-2"
-                    onClick={() => navigate(`/bookings/${booking.id}/contract`)}
+                    onClick={() => {
+                      if (!resolvedBookingId) {
+                        toast({ variant: "destructive", title: "ID manquant", description: "Impossible d'ouvrir le contrat: identifiant indisponible." });
+                        return;
+                      }
+                      navigate(`/bookings/${encodeURIComponent(resolvedBookingId)}/contract`);
+                    }}
                   >
                     <FileText className="h-4 w-4" />
                     Contrat

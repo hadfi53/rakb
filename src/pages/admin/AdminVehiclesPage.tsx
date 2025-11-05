@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { mockAdminApi, PendingVehicle } from "@/lib/mock-admin-data";
+import { adminService, PendingVehicle } from "@/lib/admin-service";
+import { supabase } from "@/lib/supabase";
 import { formatCurrency, getVehicleImageUrl } from "@/lib/utils";
 import { CheckCircle, XCircle, Clock, Car } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import {
   Dialog,
   DialogContent,
@@ -26,14 +28,14 @@ const AdminVehiclesPage = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  useEffect(() => {
     const loadVehicles = async () => {
       if (!user) return;
 
       try {
         setLoading(true);
-        const data = await mockAdminApi.getPendingVehicles();
+        const data = await adminService.getPendingVehicles();
         setVehicles(data);
       } catch (error) {
         console.error('Error loading vehicles:', error);
@@ -43,7 +45,36 @@ const AdminVehiclesPage = () => {
       }
     };
 
+  useEffect(() => {
     loadVehicles();
+  }, [user]);
+
+  // Set up real-time subscription for vehicle changes
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('admin-vehicles-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'cars'
+        },
+        () => {
+          loadVehicles();
+        }
+      )
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, [user]);
 
   const handleApprove = async (vehicleId: string) => {
@@ -51,10 +82,9 @@ const AdminVehiclesPage = () => {
 
     try {
       setProcessing(true);
-      await mockAdminApi.approveVehicle(vehicleId, user.id);
+      await adminService.approveVehicle(vehicleId, user.id);
       toast.success('Véhicule approuvé avec succès');
-      const updated = await mockAdminApi.getPendingVehicles();
-      setVehicles(updated);
+      await loadVehicles();
     } catch (error) {
       console.error('Error approving vehicle:', error);
       toast.error('Erreur lors de l\'approbation');
@@ -71,13 +101,12 @@ const AdminVehiclesPage = () => {
 
     try {
       setProcessing(true);
-      await mockAdminApi.rejectVehicle(selectedVehicle.id, user.id, rejectReason);
+      await adminService.rejectVehicle(selectedVehicle.id, user.id, rejectReason);
       toast.success('Véhicule rejeté');
       setRejectDialogOpen(false);
       setRejectReason('');
       setSelectedVehicle(null);
-      const updated = await mockAdminApi.getPendingVehicles();
-      setVehicles(updated);
+      await loadVehicles();
     } catch (error) {
       console.error('Error rejecting vehicle:', error);
       toast.error('Erreur lors du rejet');

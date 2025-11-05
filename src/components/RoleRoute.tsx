@@ -11,7 +11,7 @@ interface RoleRouteProps {
 }
 
 const RoleRoute = ({ children, allowedRoles }: RoleRouteProps) => {
-  const { user, getUserRole } = useAuth();
+  const { user, getUserRole, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
@@ -389,7 +389,7 @@ const RoleRoute = ({ children, allowedRoles }: RoleRouteProps) => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

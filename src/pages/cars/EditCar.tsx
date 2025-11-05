@@ -8,7 +8,7 @@ import { ArrowLeft, Car, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft, F
 import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useVehicle } from "@/hooks/use-vehicle";
-import { VehicleFormData, VehiclePublicationStatus } from "@/types/vehicle";
+import { Vehicle, VehicleFormData, VehiclePublicationStatus } from "@/types/vehicle";
 import { VerificationBanner } from "@/components/VerificationBanner";
 import { Badge } from "@/components/ui/badge";
 import { VehicleStatusBadge } from "@/components/vehicle/VehicleStatusBadge";
@@ -48,6 +48,7 @@ const EditCar = () => {
   const [images, setImages] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [originalPublicationStatus, setOriginalPublicationStatus] = useState<VehiclePublicationStatus | undefined>();
+  const [originalVehicle, setOriginalVehicle] = useState<Vehicle | null>(null);
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -106,7 +107,8 @@ const EditCar = () => {
           return;
         }
 
-        // Sauvegarder le statut de publication original
+        // Sauvegarder le véhicule original et son statut de publication
+        setOriginalVehicle(vehicle);
         setOriginalPublicationStatus(vehicle.publication_status);
 
         // Pré-remplir le formulaire
@@ -289,23 +291,49 @@ const EditCar = () => {
         features: formData.features,
       };
 
-      // Si le véhicule était actif, le mettre en draft pour re-modération
-      if (originalPublicationStatus === 'active') {
+      // Déterminer quels champs ont été modifiés
+      const hasImageChanges = JSON.stringify(images) !== JSON.stringify(originalVehicle?.images || []);
+      const hasDescriptionChanges = formData.description !== originalVehicle?.description;
+      const hasMakeModelChanges = formData.brand !== originalVehicle?.make || formData.model !== originalVehicle?.model;
+      const hasYearChanges = parseInt(formData.year) !== originalVehicle?.year;
+      
+      // Seules les modifications importantes nécessitent une re-modération
+      // Les modifications de prix, location, transmission, fuel_type, etc. sont automatiques
+      const requiresModeration = hasImageChanges || hasDescriptionChanges || hasMakeModelChanges || hasYearChanges;
+
+      // Si le véhicule était actif et que des modifications importantes ont été faites, le mettre en pending_review
+      if (originalPublicationStatus === 'active' && requiresModeration) {
         vehicleFormData.publication_status = 'pending_review';
         toast({
           title: "Véhicule mis à jour",
           description: "Votre véhicule a été mis à jour et sera soumis à une nouvelle modération",
         });
+      } else if (originalPublicationStatus === 'active' && !requiresModeration) {
+        // Si seulement le prix ou d'autres champs mineurs ont été modifiés, garder explicitement le statut actif
+        vehicleFormData.publication_status = 'active';
+        console.log('✅ Modifications mineures - statut actif conservé');
       }
 
-      await updateVehicle(id, vehicleFormData);
+      const updatedVehicle = await updateVehicle(id, vehicleFormData);
+      
+      if (updatedVehicle) {
+        console.log('✅ Vehicle updated successfully:', {
+          id: updatedVehicle.id,
+          publication_status: updatedVehicle.publication_status,
+          is_approved: (updatedVehicle as any).is_approved
+        });
+      }
       
       toast({
         title: "Succès",
-        description: "Votre véhicule a été mis à jour avec succès",
+        description: vehicleFormData.publication_status === 'active' 
+          ? "Votre véhicule a été mis à jour avec succès et reste actif"
+          : "Votre véhicule a été mis à jour avec succès",
       });
       
-      navigate('/dashboard/owner/vehicles');
+      // Reload vehicles list to reflect the update
+      // The navigate will trigger a reload in OwnerVehicles component
+      navigate('/dashboard/owner/vehicles', { replace: true });
     } catch (error) {
       console.error("Error updating vehicle:", error);
       toast({

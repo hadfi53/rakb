@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Car, LogIn, UserPlus, LayoutDashboard, User, LogOut, HelpCircle, MessageCircle, Shield, Bell, Settings, Calendar, Mail } from "lucide-react";
+import { Car, LogIn, UserPlus, LayoutDashboard, User, LogOut, HelpCircle, MessageCircle, Shield, Bell, Settings, Calendar, Mail, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -134,12 +134,38 @@ export const MobileMenu = memo(({
                   )}
 
                   {isAdmin && (
+                    <>
+                      <Link to="/admin">
+                        <Button variant="ghost" className="w-full justify-start" onClick={onClose}>
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          Tableau de bord Admin
+                        </Button>
+                      </Link>
+                      <Link to="/admin/users">
+                        <Button variant="ghost" className="w-full justify-start" onClick={onClose}>
+                          <Users className="mr-2 h-4 w-4" />
+                          Gestion des utilisateurs
+                        </Button>
+                      </Link>
+                      <Link to="/admin/vehicles">
+                        <Button variant="ghost" className="w-full justify-start" onClick={onClose}>
+                          <Car className="mr-2 h-4 w-4" />
+                          Gestion des véhicules
+                        </Button>
+                      </Link>
+                      <Link to="/admin/documents">
+                        <Button variant="ghost" className="w-full justify-start" onClick={onClose}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          Gestion des documents
+                        </Button>
+                      </Link>
                     <Link to="/admin/emails">
                       <Button variant="ghost" className="w-full justify-start" onClick={onClose}>
                         <Mail className="mr-2 h-4 w-4" />
                         Gestion des emails
                       </Button>
                     </Link>
+                    </>
                   )}
 
                   {/* Options communes */}

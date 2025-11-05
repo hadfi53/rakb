@@ -43,30 +43,95 @@ const ImageUpload = ({ onImagesChange, initialImages = [] }: ImageUploadProps) =
         const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
         
+        // Determine MIME type from file extension (priority over file.type which can be unreliable)
+        const mimeTypeMap: Record<string, string> = {
+          'jpg': 'image/jpeg',
+          'jpeg': 'image/jpeg',
+          'png': 'image/png',
+          'webp': 'image/webp',
+          'heic': 'image/heic',
+        };
+        
+        // Always prefer extension-based MIME type if available, otherwise use file.type
+        let contentType: string;
+        if (fileExt && mimeTypeMap[fileExt]) {
+          contentType = mimeTypeMap[fileExt];
+          console.log('✅ Using extension-based MIME type:', contentType, 'for extension:', fileExt, '(original file.type was:', file.type, ')');
+        } else if (file.type && file.type !== 'application/json' && file.type !== 'application/octet-stream' && file.type.startsWith('image/')) {
+          contentType = file.type;
+          console.log('✅ Using original file.type:', contentType);
+        } else {
+          contentType = 'image/jpeg'; // Default fallback
+          console.warn('⚠️ Could not determine MIME type, using image/jpeg. Extension:', fileExt, 'file.type:', file.type);
+        }
+
+        // Create a new File object with the correct MIME type
+        const fileToUpload = new File([file], file.name, { 
+          type: contentType,
+          lastModified: file.lastModified || Date.now()
+        });
+        
         // Update progress
         const progressPerFile = 100 / files.length;
         setUploadProgress((prev) => Math.min(prev + progressPerFile * 0.5, 95));
         
         try {
           // Upload file
+          const filePath = `images/${fileName}`;
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('vehicles')
-            .upload(`images/${fileName}`, file, {
+            .upload(filePath, fileToUpload, {
               cacheControl: '3600',
               upsert: false,
-              contentType: file.type
+              contentType: contentType
             });
             
           if (uploadError) {
+            console.error('Upload error details:', uploadError);
             throw uploadError;
           }
           
-          // Get public URL
+          // Use the path from uploadData if available, otherwise use the path we used
+          const actualPath = uploadData?.path || filePath;
+          
+          // Get public URL using the actual path
           const { data: { publicUrl } } = supabase.storage
             .from('vehicles')
-            .getPublicUrl(`images/${fileName}`);
-            
-          imageUrls.push(publicUrl);
+            .getPublicUrl(actualPath);
+          
+          console.log('📸 Image uploaded successfully:', {
+            fileName: file.name,
+            filePath: actualPath,
+            publicUrl: publicUrl,
+            uploadData: uploadData
+          });
+          
+          // Test if the URL is accessible (with a small delay for CDN propagation)
+          setTimeout(async () => {
+            try {
+              const testResponse = await fetch(publicUrl, { 
+                method: 'HEAD',
+                cache: 'no-cache'
+              });
+              console.log('🔍 Image accessibility test:', {
+                url: publicUrl,
+                status: testResponse.status,
+                statusText: testResponse.statusText,
+                accessible: testResponse.status === 200
+              });
+              
+              if (testResponse.status !== 200) {
+                console.warn('⚠️ Image might not be accessible. Status:', testResponse.status);
+                console.warn('💡 Try opening this URL in a new tab:', publicUrl);
+              }
+            } catch (fetchError) {
+              console.warn('⚠️ Could not test image accessibility:', fetchError);
+            }
+          }, 500); // Small delay for CDN propagation
+          
+          // Add timestamp to URL to prevent caching issues
+          const urlWithTimestamp = `${publicUrl}${publicUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+          imageUrls.push(urlWithTimestamp);
           setUploadProgress((prev) => Math.min(prev + progressPerFile * 0.5, 99));
           
         } catch (uploadError) {
@@ -172,11 +237,39 @@ const ImageUpload = ({ onImagesChange, initialImages = [] }: ImageUploadProps) =
           <div className="grid grid-cols-3 gap-4">
             {uploadedImages.map((url, index) => (
               <div key={index} className="relative group">
-                <div className="aspect-video rounded-md overflow-hidden border border-gray-200">
+                <div className="aspect-video rounded-md overflow-hidden border border-gray-200 bg-gray-100">
                   <img 
                     src={url} 
                     alt={`Vehicle image ${index + 1}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.error('❌ Image failed to load:', {
+                        index,
+                        url,
+                        attemptedUrl: target.src,
+                        error: 'Image load error - possible CORS or 404'
+                      });
+                      
+                      // Try to open the URL in a new tab for debugging
+                      if (import.meta.env.DEV) {
+                        console.warn('🔗 Try opening this URL manually:', url);
+                      }
+                      
+                      // Show error placeholder
+                      target.src = '/placeholder.svg';
+                      target.alt = 'Image non disponible';
+                    }}
+                    onLoad={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.log('✅ Image loaded successfully:', {
+                        index,
+                        url: target.src,
+                        naturalWidth: target.naturalWidth,
+                        naturalHeight: target.naturalHeight
+                      });
+                    }}
                   />
                 </div>
                 <button

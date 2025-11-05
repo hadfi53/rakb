@@ -22,6 +22,15 @@ const OwnerVehicles = () => {
     getOwnerVehicles();
   }, [getOwnerVehicles]);
 
+  // Refresh when component becomes visible (e.g., after navigation from edit)
+  useEffect(() => {
+    const handleFocus = () => {
+      getOwnerVehicles();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [getOwnerVehicles]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -59,9 +68,19 @@ const OwnerVehicles = () => {
               <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
                 <div className="aspect-w-16 aspect-h-9">
                   <img
-                    src={getVehicleImageUrl(vehicle.image_url || (vehicle.images && vehicle.images.length > 0 ? vehicle.images[0] : undefined))}
-                    alt={`${vehicle.brand} ${vehicle.model}`}
+                    src={getVehicleImageUrl(
+                      vehicle.image_url || 
+                      (vehicle.images && vehicle.images.length > 0 ? vehicle.images[0] : undefined)
+                    )}
+                    alt={`${vehicle.brand || vehicle.make} ${vehicle.model}`}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== '/placeholder.svg') {
+                        console.warn('Image failed to load:', target.src);
+                        target.src = '/placeholder.svg';
+                      }
+                    }}
                   />
                 </div>
                 <CardContent className="p-4">

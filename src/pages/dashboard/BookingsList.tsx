@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getVehicleImageUrl } from '@/lib/utils';
 import { 
   Car, 
   Calendar, 
@@ -119,16 +119,39 @@ const BookingsList = () => {
   const renderBookingCard = (booking: Booking) => {
     console.log("Rendu de la carte de réservation:", booking);
     // Déterminer si l'utilisateur est le propriétaire ou le locataire
-    const isOwner = user?.id === booking.ownerId;
+    const isOwner = user?.id === booking.owner_id;
+
+    // Nom du véhicule et image
+    const vehicleName = booking.vehicle
+      ? `${booking.vehicle.make || ''} ${booking.vehicle.model || ''} ${booking.vehicle.year || ''}`.trim()
+      : '';
+    const imageUrl = booking.vehicle?.images?.[0]
+      ? getVehicleImageUrl(booking.vehicle.images[0])
+      : null;
+
+    // Calcul de la durée et des tarifs
+    const start = booking.start_date ? new Date(booking.start_date) : null;
+    const end = booking.end_date ? new Date(booking.end_date) : null;
+    const durationDays = start && end
+      ? Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)))
+      : undefined;
+    const total = booking.total_price || 0;
+    const dailyRate = durationDays ? Math.round(total / durationDays) : undefined;
+
+    // Personne à afficher
+    const renter: any = (booking as any).renter;
+    const personName = isOwner
+      ? `${renter?.first_name || ''} ${renter?.last_name || ''}`.trim()
+      : `${booking.owner?.first_name || ''} ${booking.owner?.last_name || ''}`.trim();
     
     return (
       <Card key={booking.id} className="hover:shadow-md transition-shadow overflow-hidden">
         {/* Image du véhicule en haut de la carte */}
-        {booking.vehicleImageUrl && (
+        {imageUrl && (
           <div className="relative h-40 w-full">
             <img 
-              src={booking.vehicleImageUrl} 
-              alt={booking.vehicleName} 
+              src={imageUrl} 
+              alt={vehicleName || 'Véhicule'} 
               className="h-full w-full object-cover"
             />
             <div className="absolute top-2 right-2">
@@ -137,12 +160,12 @@ const BookingsList = () => {
           </div>
         )}
         
-        <CardHeader className={booking.vehicleImageUrl ? "" : "pb-2"}>
+        <CardHeader className={imageUrl ? "" : "pb-2"}>
           <div className="flex justify-between items-start">
             <CardTitle className="text-lg">
-              {booking.vehicleName || `${booking.vehicleBrand} ${booking.vehicleModel} ${booking.vehicleYear}`}
+              {vehicleName || 'Véhicule'}
             </CardTitle>
-            {!booking.vehicleImageUrl && (
+            {!imageUrl && (
               <div>{getStatusBadge(booking.status)}</div>
             )}
           </div>
@@ -155,8 +178,8 @@ const BookingsList = () => {
             <div>
               <p className="text-sm font-medium">Période de location</p>
               <p className="text-sm text-muted-foreground">
-                Du {formatDate(booking.startDate)} au {formatDate(booking.endDate)}
-                {booking.durationDays && ` (${booking.durationDays} jours)`}
+                Du {booking.start_date ? formatDate(booking.start_date) : '—'} au {booking.end_date ? formatDate(booking.end_date) : '—'}
+                {durationDays ? ` (${durationDays} jours)` : ''}
               </p>
             </div>
           </div>
@@ -166,7 +189,7 @@ const BookingsList = () => {
             <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
             <div>
               <p className="text-sm font-medium">Lieu de prise en charge</p>
-              <p className="text-sm text-muted-foreground">{booking.pickupLocation}</p>
+              <p className="text-sm text-muted-foreground">{booking.pickup_location || '—'}</p>
             </div>
           </div>
           
@@ -176,7 +199,7 @@ const BookingsList = () => {
             <div>
               <p className="text-sm font-medium">{isOwner ? 'Locataire' : 'Propriétaire'}</p>
               <p className="text-sm text-muted-foreground">
-                {isOwner ? booking.renterName : booking.ownerName}
+                {personName || '—'}
               </p>
             </div>
           </div>
@@ -187,8 +210,8 @@ const BookingsList = () => {
             <div>
               <p className="text-sm font-medium">Tarif</p>
               <p className="text-sm text-muted-foreground">
-                {booking.dailyRate?.toLocaleString('fr-FR')} MAD/jour · 
-                Total: {booking.totalAmount?.toLocaleString('fr-FR')} MAD
+                {dailyRate !== undefined ? `${dailyRate.toLocaleString('fr-FR')} MAD/jour · ` : ''}
+                Total: {total.toLocaleString('fr-FR')} MAD
               </p>
             </div>
           </div>

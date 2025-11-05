@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { mockAdminApi, AdminUser } from "@/lib/mock-admin-data";
+import { adminService, AdminUser } from "@/lib/admin-service";
+import { supabase } from "@/lib/supabase";
 import { Users, Search, Ban, UserCheck, UserX, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 const AdminUsersPage = () => {
   const { user } = useAuth();
@@ -38,8 +40,8 @@ const AdminUsersPage = () => {
   const [actionReason, setActionReason] = useState('');
   const [newRole, setNewRole] = useState<'renter' | 'owner' | 'admin'>('renter');
   const [processing, setProcessing] = useState(false);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  useEffect(() => {
     const loadUsers = async () => {
       if (!user) return;
 
@@ -50,7 +52,7 @@ const AdminUsersPage = () => {
         if (statusFilter !== 'all') params.status = statusFilter;
         if (searchTerm) params.search = searchTerm;
         
-        const data = await mockAdminApi.getUsers(params);
+        const data = await adminService.getUsers(params);
         setUsers(data);
       } catch (error) {
         console.error('Error loading users:', error);
@@ -60,7 +62,48 @@ const AdminUsersPage = () => {
       }
     };
 
+  useEffect(() => {
     loadUsers();
+  }, [user, roleFilter, statusFilter, searchTerm]);
+
+  // Set up real-time subscription for new users
+  useEffect(() => {
+    if (!user) return;
+
+    // Subscribe to profile changes (INSERT, UPDATE, DELETE)
+    const channel = supabase
+      .channel('admin-users-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles'
+        },
+        async () => {
+          // Reload users when any profile changes
+          const params: any = {};
+          if (roleFilter !== 'all') params.role = roleFilter;
+          if (statusFilter !== 'all') params.status = statusFilter;
+          if (searchTerm) params.search = searchTerm;
+          
+          try {
+            const data = await adminService.getUsers(params);
+            setUsers(data);
+          } catch (error) {
+            console.error('Error reloading users:', error);
+          }
+        }
+      )
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, [user, roleFilter, statusFilter, searchTerm]);
 
   const handleAction = async () => {
@@ -75,11 +118,11 @@ const AdminUsersPage = () => {
             toast.error('Veuillez indiquer une raison');
             return;
           }
-          await mockAdminApi.suspendUser(selectedUser.id, user.id, actionReason);
+          await adminService.suspendUser(selectedUser.id, user.id, actionReason);
           toast.success('Utilisateur suspendu');
           break;
         case 'unsuspend':
-          await mockAdminApi.unsuspendUser(selectedUser.id, user.id);
+          await adminService.unsuspendUser(selectedUser.id, user.id);
           toast.success('Utilisateur réactivé');
           break;
         case 'ban':
@@ -87,11 +130,11 @@ const AdminUsersPage = () => {
             toast.error('Veuillez indiquer une raison');
             return;
           }
-          await mockAdminApi.banUser(selectedUser.id, user.id, actionReason);
+          await adminService.banUser(selectedUser.id, user.id, actionReason);
           toast.success('Utilisateur banni');
           break;
         case 'changeRole':
-          await mockAdminApi.updateUserRole(selectedUser.id, newRole, user.id);
+          await adminService.updateUserRole(selectedUser.id, newRole, user.id);
           toast.success('Rôle modifié');
           break;
       }
@@ -101,12 +144,7 @@ const AdminUsersPage = () => {
       setSelectedUser(null);
       
       // Reload users
-      const params: any = {};
-      if (roleFilter !== 'all') params.role = roleFilter;
-      if (statusFilter !== 'all') params.status = statusFilter;
-      if (searchTerm) params.search = searchTerm;
-      const updated = await mockAdminApi.getUsers(params);
-      setUsers(updated);
+      await loadUsers();
     } catch (error) {
       console.error('Error performing action:', error);
       toast.error('Erreur lors de l\'action');

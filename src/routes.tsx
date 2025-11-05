@@ -29,6 +29,7 @@ import Settings from "./pages/settings/Settings";
 import Notifications from "./pages/notifications/Notifications";
 import OwnerVehicles from "./pages/dashboard/OwnerVehicles";
 import EmailDashboard from "./pages/admin/EmailDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import OwnerBookingsDashboard from "./pages/dashboard/OwnerBookingsDashboard";
 import RenterBookingsDashboard from "./pages/dashboard/RenterBookingsDashboard";
 import BookingDetailsPage from "./pages/bookings/BookingDetailsPage";
@@ -51,6 +52,7 @@ import DamageReportPage from "./pages/bookings/DamageReportPage";
 import AdminVehiclesPage from "./pages/admin/AdminVehiclesPage";
 import AdminDocumentsPage from "./pages/admin/AdminDocumentsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminBookings from "./pages/admin/AdminBookings";
 import BeforeOwner from "@/pages/owner/BeforeOwner";
 import Favorites from "@/pages/favorites/Favorites";
 import About from "@/pages/about/About";
@@ -121,10 +123,12 @@ function AppRoutes() {
         <Route path="/bookings/:id/confirm" element={<BookingConfirmation />} />
         <Route path="/messages" element={<RoleRoute allowedRoles={['renter', 'owner', 'admin']}><MessagesList /></RoleRoute>} />
         <Route path="/messages/:threadId" element={<RoleRoute allowedRoles={['renter', 'owner', 'admin']}><MessageThreadPage /></RoleRoute>} />
+        <Route path="/admin" element={<RoleRoute allowedRoles={['admin']}><AdminDashboard /></RoleRoute>} />
         <Route path="/admin/emails" element={<RoleRoute allowedRoles={['admin']}><EmailDashboard /></RoleRoute>} />
         <Route path="/admin/vehicles" element={<RoleRoute allowedRoles={['admin']}><AdminVehiclesPage /></RoleRoute>} />
         <Route path="/admin/documents" element={<RoleRoute allowedRoles={['admin']}><AdminDocumentsPage /></RoleRoute>} />
         <Route path="/admin/users" element={<RoleRoute allowedRoles={['admin']}><AdminUsersPage /></RoleRoute>} />
+        <Route path="/admin/bookings" element={<RoleRoute allowedRoles={['admin']}><AdminBookings /></RoleRoute>} />
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />

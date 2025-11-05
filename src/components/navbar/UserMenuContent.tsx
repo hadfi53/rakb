@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { User, LayoutDashboard, LogOut, Car, Mail, Calendar, Settings, Bell, Heart, MessageSquare } from "lucide-react";
+import { User, LayoutDashboard, LogOut, Car, Mail, Calendar, Settings, Bell, Heart, MessageSquare, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
@@ -111,9 +111,15 @@ export const UserMenuContent = ({ user, onSignOut, getInitials, unreadCount = 0 
       {isAdmin && (
         <>
           <DropdownMenuItem asChild>
-            <Link to="/admin/users" className="cursor-pointer">
+            <Link to="/admin" className="cursor-pointer">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               <span>Tableau de bord Admin</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/admin/users" className="cursor-pointer">
+              <Users className="mr-2 h-4 w-4" />
+              <span>Gestion des utilisateurs</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
