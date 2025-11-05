@@ -11,7 +11,7 @@ export const RegisterSidebar = () => {
     <div className={`relative ${isMobile ? 'h-[35vh]' : 'w-1/2 min-h-screen'} bg-primary-dark`}>
       <img 
         src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80" 
-        alt="Peer to peer car rental" 
+        alt="Location de voiture au Maroc" 
         className="w-full h-full object-cover opacity-30 absolute inset-0"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-primary-dark/80 to-primary/70"></div>

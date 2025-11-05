@@ -7,14 +7,14 @@ const testimonials = [
     name: "Sarah L.",
     role: "Locataire",
     image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Sarah&gender=female",
-    content: "J'ai trouvé la voiture parfaite pour mes vacances à un prix très compétitif. Le processus était simple et le propriétaire très accueillant !",
+    content: "J'ai trouvé la voiture parfaite pour mes vacances à un prix très compétitif. Le processus était simple et l'agence très professionnelle !",
     rating: 5
   },
   {
     name: "Mohammed A.",
-    role: "Propriétaire",
+    role: "Agence partenaire",
     image: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohammed&gender=male",
-    content: "RAKB m'a permis de rentabiliser ma voiture quand je ne l'utilise pas. La plateforme est vraiment bien pensée et l'équipe très réactive.",
+    content: "RAKB nous a permis de développer notre activité et d'augmenter notre taux d'occupation. La plateforme est vraiment bien pensée et l'équipe très réactive.",
     rating: 5
   },
   {
