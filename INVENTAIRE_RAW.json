@@ -1,0 +1,299 @@
+{
+  "timestamp": "2025-02-02T00:00:00Z",
+  "project": {
+    "name": "rakeb-website-cursor",
+    "version": "1.0.0",
+    "type": "module",
+    "node_version": ">=20.9.0",
+    "npm_version": ">=10.0.0"
+  },
+  "supabase": {
+    "project_id": "kcujctyosmjlofppntfb",
+    "organization_id": "qssdlmmxkvjwqbpixjhr",
+    "name": "rakbhadfi@gmail.com's Project",
+    "region": "eu-west-1",
+    "status": "ACTIVE_HEALTHY",
+    "database": {
+      "host": "db.kcujctyosmjlofppntfb.supabase.co",
+      "version": "17.4.1.064",
+      "postgres_engine": "17"
+    }
+  },
+  "routes": {
+    "total": 68,
+    "public": [
+      "/",
+      "/search",
+      "/auth/login",
+      "/auth/register",
+      "/auth/forgot-password",
+      "/auth/change-password",
+      "/cars/:id",
+      "/cars/:id/reviews",
+      "/how-it-works",
+      "/contact",
+      "/legal",
+      "/legal/privacy",
+      "/legal/insurance",
+      "/about",
+      "/blog",
+      "/blog/:id",
+      "/rent",
+      "/help",
+      "/pricing",
+      "/guide",
+      "/faq",
+      "/emergency"
+    ],
+    "renter": [
+      "/dashboard/renter",
+      "/dashboard/renter/bookings",
+      "/profile",
+      "/settings",
+      "/notifications",
+      "/favorites",
+      "/cars/:id/reserve",
+      "/bookings/:id",
+      "/bookings/:id/review",
+      "/bookings/:id/check-out",
+      "/bookings/:id/invoice",
+      "/bookings/:id/receipt",
+      "/bookings/:id/contract",
+      "/bookings/:id/cancel",
+      "/messages",
+      "/messages/:threadId"
+    ],
+    "owner": [
+      "/dashboard/owner",
+      "/dashboard/owner/vehicles",
+      "/dashboard/owner/bookings",
+      "/dashboard/owner/reviews",
+      "/dashboard/owner/revenue",
+      "/dashboard/owner/deposits",
+      "/dashboard/owner/refunds",
+      "/dashboard/owner/cancellations",
+      "/dashboard/owner/claims",
+      "/cars/add",
+      "/cars/:id/edit",
+      "/cars/:id/availability",
+      "/cars/:id/stats",
+      "/before-owner",
+      "/become-owner",
+      "/owner/tools",
+      "/documents/verification",
+      "/verify/tenant",
+      "/verify/host",
+      "/bookings/:id",
+      "/bookings/:id/check-in",
+      "/bookings/:id/invoice",
+      "/bookings/:id/receipt",
+      "/bookings/:id/contract",
+      "/bookings/:id/cancel",
+      "/bookings/:id/damage-report",
+      "/messages",
+      "/messages/:threadId"
+    ],
+    "admin": [
+      "/admin",
+      "/admin/emails",
+      "/admin/vehicles",
+      "/admin/documents",
+      "/admin/users",
+      "/admin/bookings",
+      "/profile",
+      "/settings",
+      "/notifications"
+    ]
+  },
+  "edge_functions": [
+    {
+      "name": "capture-payment",
+      "path": "supabase/functions/capture-payment/index.ts",
+      "description": "Captures Stripe payment intents"
+    },
+    {
+      "name": "contact-form",
+      "path": "supabase/functions/contact-form/index.ts",
+      "description": "Handles contact form submissions"
+    },
+    {
+      "name": "create-payment-intent",
+      "path": "supabase/functions/create-payment-intent/index.ts",
+      "description": "Creates Stripe Payment Intent",
+      "secrets_required": ["STRIPE_SECRET_KEY"]
+    },
+    {
+      "name": "process-email-queue",
+      "path": "supabase/functions/process-email-queue/index.ts",
+      "description": "Processes email queue via Resend",
+      "secrets_required": ["RESEND_API_KEY", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+    },
+    {
+      "name": "send-email",
+      "path": "supabase/functions/send-email/index.ts",
+      "description": "Sends individual emails via Resend"
+    },
+    {
+      "name": "send-event-email",
+      "path": "supabase/functions/send-event-email/index.ts",
+      "description": "Sends event-triggered emails"
+    },
+    {
+      "name": "hello-world",
+      "path": "supabase/functions/hello-world/index.ts",
+      "description": "Test function"
+    }
+  ],
+  "storage_buckets": [
+    {
+      "name": "vehicles",
+      "public": true,
+      "description": "Vehicle images (primary)",
+      "mime_types": ["image/jpeg", "image/png", "image/webp", "image/heic", "image/jpg"]
+    },
+    {
+      "name": "car-images",
+      "public": true,
+      "description": "Vehicle images (legacy, compatibility)",
+      "mime_types": ["image/jpeg", "image/png", "image/webp"]
+    },
+    {
+      "name": "avatars",
+      "public": true,
+      "description": "User avatars",
+      "mime_types": ["image/jpeg", "image/png", "image/webp"]
+    },
+    {
+      "name": "booking_photos",
+      "public": false,
+      "description": "Booking check-in/out photos (private)"
+    },
+    {
+      "name": "contrats",
+      "public": false,
+      "description": "Contracts (private)"
+    },
+    {
+      "name": "identity-documents",
+      "public": false,
+      "description": "Identity documents (private)"
+    },
+    {
+      "name": "user_documents",
+      "public": false,
+      "description": "User documents (private)",
+      "mime_types": ["image/jpeg", "image/png", "application/pdf"]
+    },
+    {
+      "name": "check-in-out",
+      "public": false,
+      "description": "Check-in/out photos"
+    }
+  ],
+  "database_tables": {
+    "total": 81,
+    "sensitive_tables": [
+      "bookings",
+      "payments",
+      "payment_transactions",
+      "refund_requests",
+      "email_queue",
+      "email_logs",
+      "profiles",
+      "vehicles",
+      "cars",
+      "disputes",
+      "messages",
+      "booking_messages",
+      "conversations",
+      "verification_documents",
+      "identity_documents",
+      "host_documents",
+      "verification_submissions",
+      "host_verification_requests",
+      "stripe_customers",
+      "stripe_payment_methods",
+      "transactions",
+      "wallets",
+      "host_wallets",
+      "invoices",
+      "simple_invoices",
+      "contracts",
+      "simple_contracts",
+      "cautions",
+      "audit_logs"
+    ]
+  },
+  "environment_variables": {
+    "client_side": [
+      "VITE_SUPABASE_URL",
+      "VITE_SUPABASE_ANON_KEY",
+      "VITE_STRIPE_PUBLISHABLE_KEY",
+      "VITE_APP_URL",
+      "VITE_APP_NAME",
+      "VITE_GA_MEASUREMENT_ID",
+      "VITE_PLAUSIBLE_DOMAIN",
+      "VITE_MAPBOX_TOKEN"
+    ],
+    "server_side": [
+      "STRIPE_SECRET_KEY",
+      "RESEND_API_KEY",
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "RESEND_DOMAIN",
+      "RESEND_FROM",
+      "CONTACT_EMAIL"
+    ]
+  },
+  "migrations": {
+    "total": 84,
+    "latest": [
+      "20250202_create_vehicle_blocked_dates.sql",
+      "20250201_fix_admin_rls_and_payments.sql",
+      "20250131_email_notifications_all_events.sql",
+      "20250131_create_verification_requests.sql",
+      "20250130_production_security_fixes.sql",
+      "20250129_create_messaging_tables.sql"
+    ]
+  },
+  "deployment_configs": {
+    "vercel": {
+      "file": "vercel.json",
+      "framework": "vite",
+      "output_directory": "dist",
+      "build_command": "npm run build"
+    },
+    "netlify": {
+      "file": "netlify.toml",
+      "exists": true
+    },
+    "cloudflare": {
+      "file": "wrangler.toml",
+      "exists": false
+    }
+  },
+  "build_config": {
+    "vite": {
+      "sourcemap": false,
+      "minify": "esbuild",
+      "drop_console": true,
+      "drop_debugger": true
+    },
+    "csp": {
+      "configured": true,
+      "file": "vercel.json"
+    }
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "@supabase/supabase-js": "latest",
+    "@stripe/stripe-js": "^8.2.0",
+    "@stripe/react-stripe-js": "^5.3.0",
+    "@tanstack/react-query": "^5.74.4",
+    "date-fns": "^3.6.0",
+    "zod": "^3.23.8"
+  }
+}
+
