@@ -1,0 +1,214 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: L'application RAKB sera bientôt disponible pour iPhone et Android
+      - banner [ref=e11]:
+        - generic [ref=e12]:
+          - link "RAKB" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e14]: RAKB
+          - generic [ref=e15]:
+            - button [ref=e16] [cursor=pointer]:
+              - img
+            - button "TO" [ref=e17] [cursor=pointer]:
+              - generic [ref=e19]: TO
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - link "Retour au tableau de bord" [ref=e24] [cursor=pointer]:
+          - /url: /dashboard/owner
+          - img [ref=e25]
+          - text: Retour au tableau de bord
+        - heading "Ajouter un véhicule" [level=1] [ref=e28]
+        - paragraph [ref=e29]: Complétez toutes les étapes pour publier votre véhicule
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: Étape 1 sur 7
+          - generic [ref=e34]: 14%
+        - progressbar [ref=e35]
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - img [ref=e40]
+          - generic [ref=e45]: Informations générales
+          - img [ref=e46]
+        - generic [ref=e48]:
+          - img [ref=e49]
+          - generic [ref=e55]: Documents obligatoires
+          - img [ref=e56]
+        - generic [ref=e58]:
+          - img [ref=e59]
+          - generic [ref=e62]: Photos
+          - img [ref=e63]
+        - generic [ref=e65]:
+          - img [ref=e66]
+          - generic [ref=e69]: Tarification
+          - img [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - generic [ref=e76]: Localisation & Disponibilité
+          - img [ref=e77]
+        - generic [ref=e79]:
+          - img [ref=e80]
+          - generic [ref=e82]: Politique & Conditions
+          - img [ref=e83]
+        - generic [ref=e85]:
+          - img [ref=e86]
+          - generic [ref=e89]: Prévisualisation
+      - generic [ref=e90]:
+        - heading "Informations générales" [level=3] [ref=e92]:
+          - img [ref=e93]
+          - text: Informations générales
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - generic [ref=e103]: Marque
+                - generic [ref=e104]:
+                  - img [ref=e105]
+                  - 'textbox "ex: Toyota" [ref=e110]'
+              - generic [ref=e111]:
+                - generic [ref=e112]: Modèle
+                - generic [ref=e113]:
+                  - img [ref=e114]
+                  - 'textbox "ex: Corolla" [ref=e119]'
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - generic [ref=e122]: Année
+                - spinbutton [ref=e123]
+              - generic [ref=e124]:
+                - generic [ref=e125]: Prix par jour (Dh)
+                - generic [ref=e126]:
+                  - img [ref=e127]
+                  - spinbutton [ref=e130]
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - generic [ref=e133]: Numéro d'immatriculation *
+              - 'textbox "Ex: 12345-A-67" [ref=e134]'
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]: Transmission
+                - combobox [ref=e138] [cursor=pointer]:
+                  - generic: Sélectionnez
+                  - img [ref=e139]
+              - generic [ref=e141]:
+                - generic [ref=e142]: Carburant
+                - combobox [ref=e143] [cursor=pointer]:
+                  - generic: Sélectionnez
+                  - img [ref=e144]
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: Nombre de places
+              - spinbutton [ref=e149]
+            - generic [ref=e150]:
+              - generic [ref=e151]: Nombre de portes
+              - spinbutton [ref=e152]
+            - generic [ref=e153]:
+              - generic [ref=e154]: Couleur
+              - textbox "Noir" [ref=e155]
+          - generic [ref=e156]:
+            - generic [ref=e157]: Description
+            - textbox "Décrivez votre véhicule (équipements, état, etc.)" [ref=e158]
+      - generic [ref=e159]:
+        - button "Précédent" [disabled]:
+          - img
+          - text: Précédent
+        - button "Suivant" [ref=e160] [cursor=pointer]:
+          - text: Suivant
+          - img
+    - contentinfo [ref=e161]:
+      - generic [ref=e162]:
+        - generic [ref=e163]:
+          - generic [ref=e164]:
+            - heading "À propos" [level=3] [ref=e165]
+            - list [ref=e166]:
+              - listitem [ref=e167]:
+                - link "Qui sommes-nous" [ref=e168] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e169]:
+                - link "Comment ça marche" [ref=e170] [cursor=pointer]:
+                  - /url: /how-it-works
+              - listitem [ref=e171]:
+                - link "Blog" [ref=e172] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e173]:
+            - heading "Location" [level=3] [ref=e174]
+            - list [ref=e175]:
+              - listitem [ref=e176]:
+                - link "Louer une voiture" [ref=e177] [cursor=pointer]:
+                  - /url: /rent
+              - listitem [ref=e178]:
+                - link "Assurance" [ref=e179] [cursor=pointer]:
+                  - /url: /legal/insurance
+              - listitem [ref=e180]:
+                - link "Aide" [ref=e181] [cursor=pointer]:
+                  - /url: /help
+          - generic [ref=e182]:
+            - heading "Agences" [level=3] [ref=e183]
+            - list [ref=e184]:
+              - listitem [ref=e185]:
+                - link "Rejoindre en tant qu'agence" [ref=e186] [cursor=pointer]:
+                  - /url: /become-owner
+              - listitem [ref=e187]:
+                - link "Tarifs" [ref=e188] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e189]:
+                - link "Guide" [ref=e190] [cursor=pointer]:
+                  - /url: /guide
+          - generic [ref=e191]:
+            - heading "Support" [level=3] [ref=e192]
+            - list [ref=e193]:
+              - listitem [ref=e194]:
+                - link "Contact" [ref=e195] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e196]:
+                - link "FAQ" [ref=e197] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e198]:
+                - link "Urgence" [ref=e199] [cursor=pointer]:
+                  - /url: /emergency
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - heading "Contactez-nous" [level=4] [ref=e203]
+            - generic [ref=e204]:
+              - link "contact@rakb.ma" [ref=e205] [cursor=pointer]:
+                - /url: mailto:contact@rakb.ma
+                - img [ref=e206]
+                - generic [ref=e209]: contact@rakb.ma
+              - link "+212 6 00 00 00 00" [ref=e210] [cursor=pointer]:
+                - /url: tel:+212600000000
+                - img [ref=e211]
+                - generic [ref=e213]: +212 6 00 00 00 00
+              - generic [ref=e214]:
+                - img [ref=e215]
+                - generic [ref=e218]: Casablanca, Maroc
+          - generic [ref=e219]:
+            - heading "Suivez-nous" [level=4] [ref=e220]
+            - generic [ref=e221]:
+              - link "Facebook" [ref=e222] [cursor=pointer]:
+                - /url: https://facebook.com/rakb.ma
+                - img [ref=e223]
+              - link "Twitter" [ref=e225] [cursor=pointer]:
+                - /url: https://twitter.com/rakb_ma
+                - img [ref=e226]
+              - link "Instagram" [ref=e228] [cursor=pointer]:
+                - /url: https://instagram.com/rakb.ma
+                - img [ref=e229]
+              - link "LinkedIn" [ref=e233] [cursor=pointer]:
+                - /url: https://linkedin.com/company/rakb
+                - img [ref=e234]
+        - generic [ref=e239]:
+          - paragraph [ref=e240]: © 2025 RAKB. Tous droits réservés.
+          - generic [ref=e241]:
+            - link "Confidentialité" [ref=e242] [cursor=pointer]:
+              - /url: /legal/privacy
+            - link "Mentions légales" [ref=e243] [cursor=pointer]:
+              - /url: /legal
+            - link "Assurance" [ref=e244] [cursor=pointer]:
+              - /url: /legal/insurance
+```

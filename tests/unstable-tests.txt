@@ -1,0 +1,65 @@
+# Potentially Unstable/Flaky Tests
+
+This file tracks tests that may fail intermittently due to timing, network, or state issues.
+
+## Tests Requiring Manual Review
+
+### Authentication & Session
+- tenant-login.spec.ts: "should remember user session" - Browser context recreation may fail
+- admin-login.spec.ts: "should login with admin credentials" - Role verification timing
+- All tests using signInUser helper - May need retry logic
+
+### Database-Dependent Tests
+- tenant-registration.spec.ts: "should register a new tenant" - Profile trigger timing
+- agency-registration.spec.ts: "should register a new agency/owner" - Role assignment timing
+- All tests using createTestUser - Profile creation may be delayed
+
+### Payment & External APIs
+- payment-flow.spec.ts: "should process payment and create booking" - Stripe mock reliability
+- tenant-booking-flow.spec.ts: "should complete full booking flow" - Payment iframe timing
+- All tests using Stripe helpers - Iframe interactions may be flaky
+
+### Search & Filtering
+- search-flow.spec.ts: "should search vehicles by city" - Results may be empty
+- search-flow.spec.ts: "should filter vehicles by price range" - Filter UI may not be present
+- search-flow.spec.ts: "should sort vehicles by price" - Sort dropdown may not exist
+
+### Dashboard & Data Display
+- agency-dashboard.spec.ts: "should verify dashboard data from Supabase" - Data loading timing
+- admin-dashboard.spec.ts: "should verify metrics from database" - Metrics calculation timing
+- All dashboard tests - May fail if data is empty
+
+### Mobile-Specific
+- All tests in Mobile Chrome project - Viewport differences
+- All tests in Mobile Safari project - Touch interaction differences
+
+## Common Flaky Patterns
+
+1. **Timing Issues:**
+   - Database triggers taking >1s
+   - Network requests >10s
+   - React state updates delayed
+
+2. **Selector Issues:**
+   - Elements not yet rendered
+   - Conditional rendering
+   - Dynamic class names
+
+3. **State Issues:**
+   - Previous test data not cleaned
+   - Auth session not persisted
+   - Browser cache issues
+
+4. **External Dependencies:**
+   - Supabase API rate limits
+   - Stripe mock failures
+   - Email service delays
+
+## Recommendations
+
+1. Add retry logic for flaky tests
+2. Increase timeouts for database operations
+3. Add explicit waits for data loading
+4. Improve cleanup between tests
+5. Add test isolation utilities
+

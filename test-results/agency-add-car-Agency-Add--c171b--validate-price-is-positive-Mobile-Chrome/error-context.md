@@ -1,0 +1,215 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img
+        - generic [ref=e8]: L'application RAKB sera bientôt disponible pour iPhone et Android
+      - banner [ref=e9]:
+        - generic [ref=e10]:
+          - link "RAKB" [ref=e11] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e12]: RAKB
+          - button "Menu" [ref=e13] [cursor=pointer]:
+            - img
+            - generic [ref=e14]: Menu
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - link "Retour au tableau de bord" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard/owner
+          - img [ref=e20]
+          - text: Retour au tableau de bord
+        - heading "Ajouter un véhicule" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Complétez toutes les étapes pour publier votre véhicule
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: Étape 2 sur 7
+          - generic [ref=e28]: 29%
+        - progressbar [ref=e29]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - img [ref=e34]
+          - generic [ref=e38]: Informations générales
+          - img [ref=e39]
+        - generic [ref=e41]:
+          - img [ref=e42]
+          - generic [ref=e45]: Documents obligatoires
+          - img [ref=e46]
+        - generic [ref=e48]:
+          - img [ref=e49]
+          - generic [ref=e52]: Photos
+          - img [ref=e53]
+        - generic [ref=e55]:
+          - img [ref=e56]
+          - generic [ref=e58]: Tarification
+          - img [ref=e59]
+        - generic [ref=e61]:
+          - img [ref=e62]
+          - generic [ref=e65]: Localisation & Disponibilité
+          - img [ref=e66]
+        - generic [ref=e68]:
+          - img [ref=e69]
+          - generic [ref=e71]: Politique & Conditions
+          - img [ref=e72]
+        - generic [ref=e74]:
+          - img [ref=e75]
+          - generic [ref=e78]: Prévisualisation
+      - generic [ref=e79]:
+        - heading "Documents obligatoires" [level=3] [ref=e81]:
+          - img [ref=e82]
+          - text: Documents obligatoires
+        - generic [ref=e86]:
+          - alert [ref=e87]:
+            - img [ref=e88]
+            - heading "Documents obligatoires" [level=5] [ref=e90]
+            - generic [ref=e91]: Tous ces documents sont requis pour publier votre véhicule. Ils seront vérifiés par notre équipe.
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - generic [ref=e95]:
+                - img [ref=e96]
+                - generic [ref=e99]:
+                  - paragraph [ref=e100]: Pièce d'identité / Passport
+                  - paragraph [ref=e101]: Document requis
+              - generic [ref=e103]:
+                - img [ref=e104]
+                - text: Téléchargé
+            - link "Voir le document" [ref=e108] [cursor=pointer]:
+              - /url: https://kcujctyosmjlofppntfb.supabase.co/storage/v1/object/sign/user_documents/289b7758-cf8e-48cf-b7c9-e6587960b4fd/identity/1762823271265_identity.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wOGFhYjU5My1lNmEyLTRjMzgtYWNlZS02MzkyZjMxYWM4ZGMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VyX2RvY3VtZW50cy8yODliNzc1OC1jZjhlLTQ4Y2YtYjdjOS1lNjU4Nzk2MGI0ZmQvaWRlbnRpdHkvMTc2MjgyMzI3MTI2NV9pZGVudGl0eS5wZGYiLCJpYXQiOjE3NjI4MjMyNzIsImV4cCI6MTc5NDM1OTI3Mn0.pFQEM_rs4WoiG9iO2Tl61xsuvgDuJQ0Ah2wGVwyYs14
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]:
+                - img [ref=e113]
+                - generic [ref=e116]:
+                  - paragraph [ref=e117]: Carte grise
+                  - paragraph [ref=e118]: Document requis
+              - generic [ref=e120]:
+                - img [ref=e121]
+                - text: Téléchargé
+            - link "Voir le document" [ref=e125] [cursor=pointer]:
+              - /url: https://kcujctyosmjlofppntfb.supabase.co/storage/v1/object/sign/user_documents/289b7758-cf8e-48cf-b7c9-e6587960b4fd/vehicle_registration/1762823274277_vehicle_registration.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wOGFhYjU5My1lNmEyLTRjMzgtYWNlZS02MzkyZjMxYWM4ZGMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VyX2RvY3VtZW50cy8yODliNzc1OC1jZjhlLTQ4Y2YtYjdjOS1lNjU4Nzk2MGI0ZmQvdmVoaWNsZV9yZWdpc3RyYXRpb24vMTc2MjgyMzI3NDI3N192ZWhpY2xlX3JlZ2lzdHJhdGlvbi5wZGYiLCJpYXQiOjE3NjI4MjMyNzQsImV4cCI6MTc5NDM1OTI3NH0.K-ERWvGNdKrXAHn57qJKSCU4y883DayxkWKaGdKGQK0
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - img [ref=e130]
+                - generic [ref=e133]:
+                  - paragraph [ref=e134]: Assurance
+                  - paragraph [ref=e135]: Document requis
+              - generic [ref=e137]:
+                - img [ref=e138]
+                - text: Téléchargé
+            - link "Voir le document" [ref=e142] [cursor=pointer]:
+              - /url: https://kcujctyosmjlofppntfb.supabase.co/storage/v1/object/sign/user_documents/289b7758-cf8e-48cf-b7c9-e6587960b4fd/insurance/1762823277287_insurance.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wOGFhYjU5My1lNmEyLTRjMzgtYWNlZS02MzkyZjMxYWM4ZGMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VyX2RvY3VtZW50cy8yODliNzc1OC1jZjhlLTQ4Y2YtYjdjOS1lNjU4Nzk2MGI0ZmQvaW5zdXJhbmNlLzE3NjI4MjMyNzcyODdfaW5zdXJhbmNlLnBkZiIsImlhdCI6MTc2MjgyMzI3NywiZXhwIjoxNzk0MzU5Mjc3fQ.T9UvSd_GMr0QswpzvdYXav005fzHQbRtUHS-ikpUWhg
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - img [ref=e147]
+                - generic [ref=e150]:
+                  - paragraph [ref=e151]: Contrôle technique
+                  - paragraph [ref=e152]: Document requis
+              - generic [ref=e154]:
+                - img [ref=e155]
+                - text: Téléchargé
+            - link "Voir le document" [ref=e159] [cursor=pointer]:
+              - /url: https://kcujctyosmjlofppntfb.supabase.co/storage/v1/object/sign/user_documents/289b7758-cf8e-48cf-b7c9-e6587960b4fd/technical_inspection/1762823281075_technical_inspection.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wOGFhYjU5My1lNmEyLTRjMzgtYWNlZS02MzkyZjMxYWM4ZGMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VyX2RvY3VtZW50cy8yODliNzc1OC1jZjhlLTQ4Y2YtYjdjOS1lNjU4Nzk2MGI0ZmQvdGVjaG5pY2FsX2luc3BlY3Rpb24vMTc2MjgyMzI4MTA3NV90ZWNobmljYWxfaW5zcGVjdGlvbi5wZGYiLCJpYXQiOjE3NjI4MjMyODEsImV4cCI6MTc5NDM1OTI4MX0.SMn0Bzl9Wr9kb_rovdTc02OHfXUu9Xz6zUQpATaix3E
+      - generic [ref=e160]:
+        - button "Précédent" [ref=e161] [cursor=pointer]:
+          - img
+          - text: Précédent
+        - button "Suivant" [active] [ref=e162] [cursor=pointer]:
+          - text: Suivant
+          - img
+    - contentinfo [ref=e163]:
+      - generic [ref=e164]:
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - heading "À propos" [level=3] [ref=e167]
+            - list [ref=e168]:
+              - listitem [ref=e169]:
+                - link "Qui sommes-nous" [ref=e170] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e171]:
+                - link "Comment ça marche" [ref=e172] [cursor=pointer]:
+                  - /url: /how-it-works
+              - listitem [ref=e173]:
+                - link "Blog" [ref=e174] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e175]:
+            - heading "Location" [level=3] [ref=e176]
+            - list [ref=e177]:
+              - listitem [ref=e178]:
+                - link "Louer une voiture" [ref=e179] [cursor=pointer]:
+                  - /url: /rent
+              - listitem [ref=e180]:
+                - link "Assurance" [ref=e181] [cursor=pointer]:
+                  - /url: /legal/insurance
+              - listitem [ref=e182]:
+                - link "Aide" [ref=e183] [cursor=pointer]:
+                  - /url: /help
+          - generic [ref=e184]:
+            - heading "Agences" [level=3] [ref=e185]
+            - list [ref=e186]:
+              - listitem [ref=e187]:
+                - link "Rejoindre en tant qu'agence" [ref=e188] [cursor=pointer]:
+                  - /url: /become-owner
+              - listitem [ref=e189]:
+                - link "Tarifs" [ref=e190] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e191]:
+                - link "Guide" [ref=e192] [cursor=pointer]:
+                  - /url: /guide
+          - generic [ref=e193]:
+            - heading "Support" [level=3] [ref=e194]
+            - list [ref=e195]:
+              - listitem [ref=e196]:
+                - link "Contact" [ref=e197] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e198]:
+                - link "FAQ" [ref=e199] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e200]:
+                - link "Urgence" [ref=e201] [cursor=pointer]:
+                  - /url: /emergency
+        - generic [ref=e203]:
+          - generic [ref=e204]:
+            - heading "Contactez-nous" [level=4] [ref=e205]
+            - generic [ref=e206]:
+              - link "contact@rakb.ma" [ref=e207] [cursor=pointer]:
+                - /url: mailto:contact@rakb.ma
+                - img [ref=e208]
+                - generic [ref=e211]: contact@rakb.ma
+              - link "+212 6 00 00 00 00" [ref=e212] [cursor=pointer]:
+                - /url: tel:+212600000000
+                - img [ref=e213]
+                - generic [ref=e215]: +212 6 00 00 00 00
+              - generic [ref=e216]:
+                - img [ref=e217]
+                - generic [ref=e220]: Casablanca, Maroc
+          - generic [ref=e221]:
+            - heading "Suivez-nous" [level=4] [ref=e222]
+            - generic [ref=e223]:
+              - link "Facebook" [ref=e224] [cursor=pointer]:
+                - /url: https://facebook.com/rakb.ma
+                - img [ref=e225]
+              - link "Twitter" [ref=e227] [cursor=pointer]:
+                - /url: https://twitter.com/rakb_ma
+                - img [ref=e228]
+              - link "Instagram" [ref=e230] [cursor=pointer]:
+                - /url: https://instagram.com/rakb.ma
+                - img [ref=e231]
+              - link "LinkedIn" [ref=e234] [cursor=pointer]:
+                - /url: https://linkedin.com/company/rakb
+                - img [ref=e235]
+        - generic [ref=e240]:
+          - paragraph [ref=e241]: © 2025 RAKB. Tous droits réservés.
+          - generic [ref=e242]:
+            - link "Confidentialité" [ref=e243] [cursor=pointer]:
+              - /url: /legal/privacy
+            - link "Mentions légales" [ref=e244] [cursor=pointer]:
+              - /url: /legal
+            - link "Assurance" [ref=e245] [cursor=pointer]:
+              - /url: /legal/insurance
+```

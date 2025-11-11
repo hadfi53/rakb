@@ -1,0 +1,105 @@
+{
+  "timestamp": "2025-11-05T21:22:39.045Z",
+  "supabase": {
+    "project": {
+      "id": "kcujctyosmjlofppntfb",
+      "url": "https://kcujctyosmjlofppntfb.supabase.co",
+      "status": "ACTIVE_HEALTHY"
+    },
+    "publicClient": {
+      "status": "success",
+      "message": "Connected and query successful",
+      "details": {
+        "url": "https://kcujctyosmjlofppntfb.supabase.co",
+        "connected": true,
+        "sampleRecords": 1
+      }
+    },
+    "serviceRole": {
+      "status": "missing",
+      "message": "SUPABASE_SERVICE_ROLE_KEY not set in environment",
+      "details": {
+        "url": "https://kcujctyosmjlofppntfb.supabase.co",
+        "hasUrl": true,
+        "hasKey": false
+      }
+    }
+  },
+  "stripe": {
+    "status": "missing",
+    "message": "STRIPE_SECRET_KEY not set in environment",
+    "details": {}
+  },
+  "resend": {
+    "status": "missing",
+    "message": "RESEND_API_KEY not set in environment",
+    "details": {}
+  },
+  "variables": {
+    "clientSide": {
+      "VITE_SUPABASE_URL": {
+        "exists": true,
+        "value": "https://kcujctyosmjlofppntfb.supabase.co"
+      },
+      "VITE_SUPABASE_ANON_KEY": {
+        "exists": true,
+        "value": "eyJhbGc..."
+      },
+      "VITE_STRIPE_PUBLISHABLE_KEY": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "VITE_APP_URL": {
+        "exists": true,
+        "value": "https://rakb.ma"
+      },
+      "VITE_APP_NAME": {
+        "exists": true,
+        "value": "RAKB"
+      },
+      "VITE_GA_MEASUREMENT_ID": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "VITE_PLAUSIBLE_DOMAIN": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "VITE_MAPBOX_TOKEN": {
+        "exists": false,
+        "value": "NOT SET"
+      }
+    },
+    "serverSide": {
+      "STRIPE_SECRET_KEY": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "SUPABASE_URL": {
+        "exists": true,
+        "value": "https://kcujctyosmjlofppntfb.supabase.co"
+      },
+      "SUPABASE_SERVICE_ROLE_KEY": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "RESEND_API_KEY": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "CONTACT_EMAIL": {
+        "exists": true,
+        "value": "contact@rakb.ma"
+      },
+      "RESEND_DOMAIN": {
+        "exists": false,
+        "value": "NOT SET"
+      },
+      "RESEND_FROM": {
+        "exists": false,
+        "value": "NOT SET"
+      }
+    }
+  },
+  "readinessScore": 33
+}

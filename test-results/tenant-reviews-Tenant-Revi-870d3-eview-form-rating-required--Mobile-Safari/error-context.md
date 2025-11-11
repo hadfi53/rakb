@@ -1,0 +1,167 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img
+        - generic [ref=e8]: L'application RAKB sera bientôt disponible pour iPhone et Android
+      - banner [ref=e9]:
+        - generic [ref=e10]:
+          - link "RAKB" [ref=e11]:
+            - /url: /
+            - generic [ref=e12]: RAKB
+          - button "Menu" [ref=e13] [cursor=pointer]:
+            - img
+            - generic [ref=e14]: Menu
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - link "Retour aux détails du véhicule" [ref=e19]:
+          - /url: /cars/e60770ba-d09c-4483-9675-f387720ccbfa
+          - img [ref=e20]
+          - text: Retour aux détails du véhicule
+        - generic [ref=e22]:
+          - heading "Avis et évaluations" [level=1] [ref=e23]
+          - paragraph [ref=e24]: Test Car 0
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - generic [ref=e33]: "5.0"
+          - paragraph [ref=e34]: 1 avis
+        - generic [ref=e36]:
+          - paragraph [ref=e37]: Distribution
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: 5 étoiles
+              - generic [ref=e43]: "1"
+            - generic [ref=e44]:
+              - generic [ref=e45]: 4 étoiles
+              - generic [ref=e47]: "0"
+            - generic [ref=e48]:
+              - generic [ref=e49]: 3 étoiles
+              - generic [ref=e51]: "0"
+            - generic [ref=e52]:
+              - generic [ref=e53]: 2 étoiles
+              - generic [ref=e55]: "0"
+            - generic [ref=e56]:
+              - generic [ref=e57]: 1 étoiles
+              - generic [ref=e59]: "0"
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e66]: TT
+            - generic [ref=e67]:
+              - paragraph [ref=e68]: Test Tenant
+              - paragraph [ref=e69]: 11 novembre 2025
+          - generic [ref=e70]:
+            - button [disabled] [ref=e71]:
+              - img [ref=e72]
+              - img [ref=e74]
+            - button [disabled] [ref=e76]:
+              - img [ref=e77]
+              - img [ref=e79]
+            - button [disabled] [ref=e81]:
+              - img [ref=e82]
+              - img [ref=e84]
+            - button [disabled] [ref=e86]:
+              - img [ref=e87]
+              - img [ref=e89]
+            - button [disabled] [ref=e91]:
+              - img [ref=e92]
+              - img [ref=e94]
+        - paragraph [ref=e96]: Great car, very clean and well maintained! Excellent service and communication.
+    - contentinfo [ref=e97]:
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - heading "À propos" [level=3] [ref=e101]
+            - list [ref=e102]:
+              - listitem [ref=e103]:
+                - link "Qui sommes-nous" [ref=e104]:
+                  - /url: /about
+              - listitem [ref=e105]:
+                - link "Comment ça marche" [ref=e106]:
+                  - /url: /how-it-works
+              - listitem [ref=e107]:
+                - link "Blog" [ref=e108]:
+                  - /url: /blog
+          - generic [ref=e109]:
+            - heading "Location" [level=3] [ref=e110]
+            - list [ref=e111]:
+              - listitem [ref=e112]:
+                - link "Louer une voiture" [ref=e113]:
+                  - /url: /rent
+              - listitem [ref=e114]:
+                - link "Assurance" [ref=e115]:
+                  - /url: /legal/insurance
+              - listitem [ref=e116]:
+                - link "Aide" [ref=e117]:
+                  - /url: /help
+          - generic [ref=e118]:
+            - heading "Agences" [level=3] [ref=e119]
+            - list [ref=e120]:
+              - listitem [ref=e121]:
+                - link "Rejoindre en tant qu'agence" [ref=e122]:
+                  - /url: /become-owner
+              - listitem [ref=e123]:
+                - link "Tarifs" [ref=e124]:
+                  - /url: /pricing
+              - listitem [ref=e125]:
+                - link "Guide" [ref=e126]:
+                  - /url: /guide
+          - generic [ref=e127]:
+            - heading "Support" [level=3] [ref=e128]
+            - list [ref=e129]:
+              - listitem [ref=e130]:
+                - link "Contact" [ref=e131]:
+                  - /url: /contact
+              - listitem [ref=e132]:
+                - link "FAQ" [ref=e133]:
+                  - /url: /faq
+              - listitem [ref=e134]:
+                - link "Urgence" [ref=e135]:
+                  - /url: /emergency
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - heading "Contactez-nous" [level=4] [ref=e139]
+            - generic [ref=e140]:
+              - link "contact@rakb.ma" [ref=e141]:
+                - /url: mailto:contact@rakb.ma
+                - img [ref=e142]
+                - generic [ref=e145]: contact@rakb.ma
+              - link "+212 6 00 00 00 00" [ref=e146]:
+                - /url: tel:+212600000000
+                - img [ref=e147]
+                - generic [ref=e149]: +212 6 00 00 00 00
+              - generic [ref=e150]:
+                - img [ref=e151]
+                - generic [ref=e154]: Casablanca, Maroc
+          - generic [ref=e155]:
+            - heading "Suivez-nous" [level=4] [ref=e156]
+            - generic [ref=e157]:
+              - link "Facebook" [ref=e158]:
+                - /url: https://facebook.com/rakb.ma
+                - img [ref=e159]
+              - link "Twitter" [ref=e161]:
+                - /url: https://twitter.com/rakb_ma
+                - img [ref=e162]
+              - link "Instagram" [ref=e164]:
+                - /url: https://instagram.com/rakb.ma
+                - img [ref=e165]
+              - link "LinkedIn" [ref=e168]:
+                - /url: https://linkedin.com/company/rakb
+                - img [ref=e169]
+        - generic [ref=e174]:
+          - paragraph [ref=e175]: © 2025 RAKB. Tous droits réservés.
+          - generic [ref=e176]:
+            - link "Confidentialité" [ref=e177]:
+              - /url: /legal/privacy
+            - link "Mentions légales" [ref=e178]:
+              - /url: /legal
+            - link "Assurance" [ref=e179]:
+              - /url: /legal/insurance
+```

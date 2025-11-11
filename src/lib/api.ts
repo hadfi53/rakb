@@ -51,27 +51,55 @@ export const vehiclesApi = {
 
     // Apply client-side filters that might not be supported by RPC
     let filtered = [...vehicles];
+    const initialCount = filtered.length;
     
     if (params.transmission && params.transmission !== 'all') {
+      const before = filtered.length;
       filtered = filtered.filter(v => v.transmission === params.transmission);
+      if (import.meta.env.DEV && filtered.length < before) {
+        console.log(`🔧 [searchVehicles] Transmission filter: ${before} → ${filtered.length} (filter: ${params.transmission})`);
+      }
     }
     
     if (params.fuelType && params.fuelType !== 'all') {
+      const before = filtered.length;
       filtered = filtered.filter(v => v.fuel_type === params.fuelType);
+      if (import.meta.env.DEV && filtered.length < before) {
+        console.log(`🔧 [searchVehicles] FuelType filter: ${before} → ${filtered.length} (filter: ${params.fuelType})`);
+      }
     }
     
     if (params.minSeats !== undefined) {
+      const before = filtered.length;
       filtered = filtered.filter(v => (v.seats || 0) >= params.minSeats!);
+      if (import.meta.env.DEV && filtered.length < before) {
+        console.log(`🔧 [searchVehicles] MinSeats filter: ${before} → ${filtered.length} (filter: ${params.minSeats})`);
+      }
     }
     
-    if (params.isPremium !== undefined) {
-      filtered = filtered.filter(v => v.is_premium === params.isPremium);
+    if (params.isPremium !== undefined && params.isPremium !== false) {
+      // Only filter if isPremium is explicitly true
+      // If false or undefined, show all cars (both premium and non-premium)
+      const before = filtered.length;
+      filtered = filtered.filter(v => v.is_premium === true);
+      if (import.meta.env.DEV && filtered.length < before) {
+        console.log(`🔧 [searchVehicles] IsPremium filter: ${before} → ${filtered.length} (filter: ${params.isPremium})`);
+      }
+    } else if (import.meta.env.DEV && params.isPremium === false) {
+      console.log(`🔧 [searchVehicles] IsPremium filter skipped (false = show all cars)`);
     }
     
     if (import.meta.env.DEV) {
-      console.log(`${filtered.length} véhicules après filtrage client-side`);
+      console.log(`${filtered.length} véhicules après filtrage client-side (${initialCount} → ${filtered.length})`);
       if (filtered.length === 0 && vehicles.length > 0) {
         console.warn('⚠️ Des véhicules ont été récupérés mais filtrés par les filtres client-side');
+        console.warn('⚠️ Filtres appliqués:', {
+          transmission: params.transmission,
+          fuelType: params.fuelType,
+          minSeats: params.minSeats,
+          isPremium: params.isPremium
+        });
+        console.warn('⚠️ Exemple de véhicule filtré:', vehicles[0]);
       }
     }
     return filtered;

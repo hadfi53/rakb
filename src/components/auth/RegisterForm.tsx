@@ -30,14 +30,21 @@ export const RegisterForm = () => {
     
     setIsLoading(true);
     try {
-      await signUp(
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName,
-        formData.role
-      );
-      navigate('/auth/login');
+      const success = await signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            role: formData.role,
+          },
+        },
+      });
+      
+      if (success) {
+        navigate('/auth/login');
+      }
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
     } finally {

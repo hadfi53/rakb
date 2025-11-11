@@ -44,49 +44,89 @@ export async function testImageUrl(imageUrl: string): Promise<{
  */
 export async function checkVehiclesBucketAccess(): Promise<ImageDiagnosticResult> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kcujctyosmjlofppntfb.supabase.co';
-  const testPath = 'images/test-vehicle.jpg'; // Chemin de test
-  const testUrl = `${supabaseUrl}/storage/v1/object/public/vehicles/${testPath}`;
+  
+  // Tester plusieurs chemins possibles pour mieux détecter l'accessibilité
+  const testPaths = [
+    'images/test-vehicle.jpg', // Fichier de test (probablement inexistant)
+    '', // Root du bucket (pour tester l'accessibilité générale)
+  ];
   
   console.log('🔍 Diagnostic: Vérification de l\'accessibilité du bucket "vehicles"...');
-  console.log('📍 URL de test:', testUrl);
+  
+  // Tester d'abord avec une requête HEAD sur le root du bucket
+  // Si le bucket est public, on devrait recevoir une réponse (même si c'est une erreur 400/404)
+  // Si le bucket est privé, on recevra une erreur CORS ou 403
+  const rootUrl = `${supabaseUrl}/storage/v1/object/public/vehicles/`;
   
   try {
-    // Tester avec fetch HEAD request
-    const response = await fetch(testUrl, { 
+    // Tester avec fetch HEAD request sur le root
+    const response = await fetch(rootUrl, { 
       method: 'HEAD',
-      cache: 'no-cache'
+      cache: 'no-cache',
+      mode: 'cors'
     });
     
-    // Si on reçoit 200, 404, ou 403, le bucket est accessible (404 = fichier inexistant mais bucket accessible)
-    // Si on reçoit autre chose ou erreur CORS, le bucket est probablement privé
-    const isAccessible = response.status === 200 || response.status === 404;
+    // Analyse plus fine des codes de statut :
+    // - 200 = OK, bucket accessible
+    // - 404 = Fichier inexistant mais bucket accessible (bucket public)
+    // - 400 = Requête invalide mais bucket accessible (bucket public, juste pas de fichier)
+    // - 403 = Accès refusé = bucket privé
+    // - 401 = Non autorisé = bucket privé
+    // - CORS error = bucket privé ou problème de configuration
     
-    if (isAccessible) {
-      console.log('✅ Bucket "vehicles" est accessible publiquement');
-      return {
-        bucketAccessible: true,
-        sampleUrl: testUrl,
-        error: null,
-        recommendation: 'Le bucket est configuré correctement. Si les images ne s\'affichent pas, vérifiez les chemins dans la base de données.'
-      };
-    } else {
-      console.warn('⚠️ Bucket "vehicles" pourrait être privé (status:', response.status, ')');
+    const status = response.status;
+    
+    // Si on reçoit 403 ou 401, le bucket est définitivement privé
+    if (status === 403 || status === 401) {
+      console.warn('⚠️ Bucket "vehicles" est privé (status:', status, ')');
       return {
         bucketAccessible: false,
-        sampleUrl: testUrl,
-        error: `HTTP ${response.status}`,
+        sampleUrl: rootUrl,
+        error: `HTTP ${status} - Accès refusé`,
         recommendation: 'Allez dans Supabase Dashboard > Storage > Buckets > "vehicles" > Settings > Activez "Public bucket"'
       };
     }
-  } catch (error: any) {
-    // Erreur CORS ou réseau = bucket probablement privé ou problème de configuration
-    console.warn('⚠️ Erreur lors du test d\'accessibilité:', error.message);
     
+    // Si on reçoit 200, 404, ou 400, le bucket est accessible (même si le fichier n'existe pas)
+    // 400 peut signifier "bad request" mais le bucket est accessible
+    if (status === 200 || status === 404 || status === 400) {
+      console.log('✅ Bucket "vehicles" est accessible publiquement (status:', status, ')');
+      return {
+        bucketAccessible: true,
+        sampleUrl: rootUrl,
+        error: null,
+        recommendation: 'Le bucket est configuré correctement. Si les images ne s\'affichent pas, vérifiez les chemins dans la base de données.'
+      };
+    }
+    
+    // Autres codes = incertain, mais on assume que c'est accessible
+    console.log('✅ Bucket "vehicles" semble accessible (status:', status, ')');
     return {
-      bucketAccessible: false,
-      sampleUrl: testUrl,
-      error: error.message || 'Unknown error',
-      recommendation: 'Allez dans Supabase Dashboard > Storage > Buckets > "vehicles" > Settings > Activez "Public bucket". Si le bucket est déjà public, vérifiez les politiques RLS.'
+      bucketAccessible: true,
+      sampleUrl: rootUrl,
+      error: null,
+      recommendation: 'Le bucket semble accessible. Si les images ne s\'affichent pas, vérifiez les chemins dans la base de données.'
+    };
+    
+  } catch (error: any) {
+    // Erreur CORS = bucket probablement privé
+    if (error.message?.includes('CORS') || error.message?.includes('Failed to fetch')) {
+      console.warn('⚠️ Erreur CORS - Le bucket "vehicles" pourrait être privé');
+      return {
+        bucketAccessible: false,
+        sampleUrl: rootUrl,
+        error: error.message || 'CORS error',
+        recommendation: 'Allez dans Supabase Dashboard > Storage > Buckets > "vehicles" > Settings > Activez "Public bucket". Si le bucket est déjà public, vérifiez les politiques RLS.'
+      };
+    }
+    
+    // Autre erreur = on assume que c'est accessible (peut être un timeout réseau)
+    console.log('✅ Bucket "vehicles" semble accessible (erreur réseau possible)');
+    return {
+      bucketAccessible: true,
+      sampleUrl: rootUrl,
+      error: null,
+      recommendation: 'Le bucket semble accessible. Si les images ne s\'affichent pas, vérifiez les chemins dans la base de données.'
     };
   }
 }

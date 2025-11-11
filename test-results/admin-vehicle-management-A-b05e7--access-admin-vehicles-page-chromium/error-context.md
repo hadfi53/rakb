@@ -1,0 +1,181 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e9]: L'application RAKB sera bientôt disponible pour iPhone et Android
+      - banner [ref=e10]:
+        - generic [ref=e11]:
+          - link "RAKB" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e13]: RAKB
+          - generic [ref=e14]:
+            - button "Pour les agences" [ref=e15] [cursor=pointer]:
+              - img
+              - text: Pour les agences
+            - button [ref=e16] [cursor=pointer]:
+              - img
+            - button "TA" [ref=e17] [cursor=pointer]:
+              - generic [ref=e19]: TA
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Modération des Véhicules" [level=1] [ref=e24]
+        - paragraph [ref=e25]: Approuvez ou rejetez les véhicules en attente
+      - generic [ref=e27]: 4 véhicule(s) en attente
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - img "Test Car" [ref=e31]
+          - generic [ref=e32]:
+            - heading "Test Car" [level=3] [ref=e33]
+            - generic [ref=e34]:
+              - paragraph [ref=e35]: 📍 Rabat
+              - paragraph [ref=e36]: 💰 500,00 MAD/jour
+              - paragraph [ref=e37]: 📅 Soumis le 11/11/2025
+            - generic [ref=e38]:
+              - button "Approuver" [ref=e39] [cursor=pointer]:
+                - img
+                - text: Approuver
+              - button "Rejeter" [ref=e40] [cursor=pointer]:
+                - img
+                - text: Rejeter
+        - generic [ref=e41]:
+          - img "Test Car" [ref=e43]
+          - generic [ref=e44]:
+            - heading "Test Car" [level=3] [ref=e45]
+            - generic [ref=e46]:
+              - paragraph [ref=e47]: 📍 Rabat
+              - paragraph [ref=e48]: 💰 500,00 MAD/jour
+              - paragraph [ref=e49]: 📅 Soumis le 11/11/2025
+            - generic [ref=e50]:
+              - button "Approuver" [ref=e51] [cursor=pointer]:
+                - img
+                - text: Approuver
+              - button "Rejeter" [ref=e52] [cursor=pointer]:
+                - img
+                - text: Rejeter
+        - generic [ref=e53]:
+          - img "Toyota Camry" [ref=e55]
+          - generic [ref=e56]:
+            - heading "Toyota Camry 2020" [level=3] [ref=e57]
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: 📍 Rabat
+              - paragraph [ref=e60]: 💰 500,00 MAD/jour
+              - paragraph [ref=e61]: 📅 Soumis le 06/11/2025
+            - generic [ref=e62]:
+              - button "Approuver" [ref=e63] [cursor=pointer]:
+                - img
+                - text: Approuver
+              - button "Rejeter" [ref=e64] [cursor=pointer]:
+                - img
+                - text: Rejeter
+        - generic [ref=e65]:
+          - img "TEST TEST" [ref=e67]
+          - generic [ref=e68]:
+            - heading "TEST TEST 2020" [level=3] [ref=e69]
+            - generic [ref=e70]:
+              - paragraph [ref=e71]: 📍 Rabat
+              - paragraph [ref=e72]: 💰 2 500,00 MAD/jour
+              - paragraph [ref=e73]: 📅 Soumis le 05/11/2025
+            - generic [ref=e74]:
+              - button "Approuver" [ref=e75] [cursor=pointer]:
+                - img
+                - text: Approuver
+              - button "Rejeter" [ref=e76] [cursor=pointer]:
+                - img
+                - text: Rejeter
+    - contentinfo [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - heading "À propos" [level=3] [ref=e81]
+            - list [ref=e82]:
+              - listitem [ref=e83]:
+                - link "Qui sommes-nous" [ref=e84] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e85]:
+                - link "Comment ça marche" [ref=e86] [cursor=pointer]:
+                  - /url: /how-it-works
+              - listitem [ref=e87]:
+                - link "Blog" [ref=e88] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e89]:
+            - heading "Location" [level=3] [ref=e90]
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - link "Louer une voiture" [ref=e93] [cursor=pointer]:
+                  - /url: /rent
+              - listitem [ref=e94]:
+                - link "Assurance" [ref=e95] [cursor=pointer]:
+                  - /url: /legal/insurance
+              - listitem [ref=e96]:
+                - link "Aide" [ref=e97] [cursor=pointer]:
+                  - /url: /help
+          - generic [ref=e98]:
+            - heading "Agences" [level=3] [ref=e99]
+            - list [ref=e100]:
+              - listitem [ref=e101]:
+                - link "Rejoindre en tant qu'agence" [ref=e102] [cursor=pointer]:
+                  - /url: /become-owner
+              - listitem [ref=e103]:
+                - link "Tarifs" [ref=e104] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e105]:
+                - link "Guide" [ref=e106] [cursor=pointer]:
+                  - /url: /guide
+          - generic [ref=e107]:
+            - heading "Support" [level=3] [ref=e108]
+            - list [ref=e109]:
+              - listitem [ref=e110]:
+                - link "Contact" [ref=e111] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e112]:
+                - link "FAQ" [ref=e113] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e114]:
+                - link "Urgence" [ref=e115] [cursor=pointer]:
+                  - /url: /emergency
+        - generic [ref=e117]:
+          - generic [ref=e118]:
+            - heading "Contactez-nous" [level=4] [ref=e119]
+            - generic [ref=e120]:
+              - link "contact@rakb.ma" [ref=e121] [cursor=pointer]:
+                - /url: mailto:contact@rakb.ma
+                - img [ref=e122]
+                - generic [ref=e125]: contact@rakb.ma
+              - link "+212 6 00 00 00 00" [ref=e126] [cursor=pointer]:
+                - /url: tel:+212600000000
+                - img [ref=e127]
+                - generic [ref=e129]: +212 6 00 00 00 00
+              - generic [ref=e130]:
+                - img [ref=e131]
+                - generic [ref=e134]: Casablanca, Maroc
+          - generic [ref=e135]:
+            - heading "Suivez-nous" [level=4] [ref=e136]
+            - generic [ref=e137]:
+              - link "Facebook" [ref=e138] [cursor=pointer]:
+                - /url: https://facebook.com/rakb.ma
+                - img [ref=e139]
+              - link "Twitter" [ref=e141] [cursor=pointer]:
+                - /url: https://twitter.com/rakb_ma
+                - img [ref=e142]
+              - link "Instagram" [ref=e144] [cursor=pointer]:
+                - /url: https://instagram.com/rakb.ma
+                - img [ref=e145]
+              - link "LinkedIn" [ref=e148] [cursor=pointer]:
+                - /url: https://linkedin.com/company/rakb
+                - img [ref=e149]
+        - generic [ref=e154]:
+          - paragraph [ref=e155]: © 2025 RAKB. Tous droits réservés.
+          - generic [ref=e156]:
+            - link "Confidentialité" [ref=e157] [cursor=pointer]:
+              - /url: /legal/privacy
+            - link "Mentions légales" [ref=e158] [cursor=pointer]:
+              - /url: /legal
+            - link "Assurance" [ref=e159] [cursor=pointer]:
+              - /url: /legal/insurance
+```

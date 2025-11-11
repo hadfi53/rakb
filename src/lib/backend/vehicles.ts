@@ -99,6 +99,10 @@ const mapCarToVehicle = (car: any): Vehicle => {
  */
 export const getAvailableVehicles = async (searchParams?: VehicleSearch): Promise<{ vehicles: Vehicle[]; error: any }> => {
   try {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [getAvailableVehicles] Starting search with params:', searchParams);
+    }
+
     let query = supabase
       .from('cars')
       .select('*')
@@ -107,29 +111,150 @@ export const getAvailableVehicles = async (searchParams?: VehicleSearch): Promis
 
     // Apply search filters
     if (searchParams?.location) {
-      query = query.ilike('location', `%${searchParams.location}%`);
+      // Trim and normalize location for better matching
+      const normalizedLocation = searchParams.location.trim();
+      query = query.ilike('location', `%${normalizedLocation}%`);
+      if (import.meta.env.DEV) {
+        console.log('📍 [getAvailableVehicles] Filtering by location:', normalizedLocation);
+        console.log('📍 [getAvailableVehicles] Using ILIKE pattern:', `%${normalizedLocation}%`);
+      }
+    } else {
+      if (import.meta.env.DEV) {
+        console.log('📍 [getAvailableVehicles] No location filter - searching all locations');
+      }
     }
 
     if (searchParams?.minPrice) {
       query = query.gte('price_per_day', searchParams.minPrice);
+      if (import.meta.env.DEV) {
+        console.log('💰 [getAvailableVehicles] Min price:', searchParams.minPrice);
+      }
     }
 
     if (searchParams?.maxPrice) {
       query = query.lte('price_per_day', searchParams.maxPrice);
+      if (import.meta.env.DEV) {
+        console.log('💰 [getAvailableVehicles] Max price:', searchParams.maxPrice);
+      }
     }
 
     if (searchParams?.category) {
       query = query.eq('category', searchParams.category);
+      if (import.meta.env.DEV) {
+        console.log('🏷️ [getAvailableVehicles] Category:', searchParams.category);
+      }
+    }
+
+    if (import.meta.env.DEV) {
+      console.log('📤 [getAvailableVehicles] Executing query...');
     }
 
     const { data, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching available vehicles:', error);
+      console.error('❌ [getAvailableVehicles] Error fetching available vehicles:', error);
+      console.error('❌ [getAvailableVehicles] Error details:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
       return { vehicles: [], error };
     }
 
-    const vehicles = (data || []).map(mapCarToVehicle);
+    // Debug: Check if user is authenticated
+    if (import.meta.env.DEV) {
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('👤 [getAvailableVehicles] User auth status:', user ? `Authenticated as ${user.id}` : 'Anonymous');
+    }
+
+    if (import.meta.env.DEV) {
+      console.log(`✅ [getAvailableVehicles] Query successful. Found ${data?.length || 0} cars in database`);
+      if (data && data.length > 0) {
+        console.log('📋 [getAvailableVehicles] Sample car:', {
+          id: data[0].id,
+          brand: data[0].brand,
+          model: data[0].model,
+          location: data[0].location,
+          is_available: data[0].is_available,
+          is_approved: data[0].is_approved
+        });
+      } else {
+        console.warn('⚠️ [getAvailableVehicles] No cars found. Possible reasons:');
+        console.warn('   - No cars in database');
+        console.warn('   - All cars have is_available = false');
+        console.warn('   - All cars have is_approved = false');
+        console.warn('   - RLS policy blocking access');
+      }
+    }
+
+    let vehicles = (data || []).map(mapCarToVehicle);
+
+    if (import.meta.env.DEV) {
+      console.log(`🔄 [getAvailableVehicles] Mapped ${vehicles.length} vehicles after conversion`);
+    }
+
+    // Filter out vehicles with blocked dates if startDate and endDate are provided
+    if (searchParams?.startDate && searchParams?.endDate) {
+      if (import.meta.env.DEV) {
+        console.log(`📅 [getAvailableVehicles] Filtering by dates: ${searchParams.startDate} to ${searchParams.endDate}`);
+        console.time('⏱️ Date filtering');
+      }
+      
+      // OPTIMIZATION: Check all vehicles in parallel instead of sequentially
+      const availabilityChecks = vehicles.map(async (vehicle) => {
+        const [blockedResult, bookingResult] = await Promise.all([
+          checkBlockedDatesInRange(
+            vehicle.id,
+            searchParams.startDate!,
+            searchParams.endDate!
+          ),
+          checkVehicleAvailability(
+            vehicle.id,
+            searchParams.startDate!,
+            searchParams.endDate!
+          )
+        ]);
+
+        const { hasBlockedDates, error: blockedError } = blockedResult;
+        const { available, error: bookingError } = bookingResult;
+
+        // If errors, still include the vehicle (fail open)
+        if (blockedError || bookingError) {
+          if (import.meta.env.DEV) {
+            if (blockedError) {
+              console.error(`Error checking blocked dates for vehicle ${vehicle.id}:`, blockedError);
+            }
+            if (bookingError) {
+              console.error(`Error checking bookings for vehicle ${vehicle.id}:`, bookingError);
+            }
+          }
+          return { vehicle, isAvailable: true }; // Fail open
+        }
+
+        // Only include vehicle if it's available and has no blocked dates
+        const isAvailable = available.isAvailable && !hasBlockedDates;
+        return { vehicle, isAvailable };
+      });
+
+      // Wait for all checks to complete in parallel
+      const results = await Promise.all(availabilityChecks);
+      
+      // Filter to only available vehicles
+      vehicles = results
+        .filter(result => result.isAvailable)
+        .map(result => result.vehicle);
+
+      if (import.meta.env.DEV) {
+        console.timeEnd('⏱️ Date filtering');
+        console.log(`📅 [getAvailableVehicles] After date filtering: ${vehicles.length} vehicles available`);
+      }
+    }
+
+    if (import.meta.env.DEV) {
+      console.log(`✅ [getAvailableVehicles] Final result: ${vehicles.length} vehicles returned`);
+    }
+
     return { vehicles, error: null };
   } catch (error: any) {
     console.error('Error in getAvailableVehicles:', error);
@@ -325,7 +450,57 @@ export const deleteVehicle = async (vehicleId: string, ownerId: string): Promise
 };
 
 /**
- * Check vehicle availability for a date range
+ * Blocked date interface
+ */
+export interface BlockedDate {
+  id: string;
+  vehicle_id: string;
+  blocked_date: string; // ISO date string (YYYY-MM-DD)
+  reason?: 'maintenance' | 'manual' | 'other';
+  note?: string;
+  created_at: string;
+  created_by?: string;
+}
+
+/**
+ * Check if a vehicle has blocked dates in a date range
+ */
+export const checkBlockedDatesInRange = async (
+  vehicleId: string,
+  startDate: string,
+  endDate: string
+): Promise<{ hasBlockedDates: boolean; error: any }> => {
+  try {
+    // Convert dates to DATE format (remove time component)
+    const startDateOnly = startDate.split('T')[0];
+    const endDateOnly = endDate.split('T')[0];
+
+    const { data, error } = await supabase
+      .from('vehicle_blocked_dates')
+      .select('id')
+      .eq('vehicle_id', vehicleId)
+      .gte('blocked_date', startDateOnly)
+      .lte('blocked_date', endDateOnly)
+      .limit(1);
+
+    if (error) {
+      console.error('Error checking blocked dates:', error);
+      return { hasBlockedDates: false, error };
+    }
+
+    return {
+      hasBlockedDates: data && data.length > 0,
+      error: null,
+    };
+  } catch (error: any) {
+    console.error('Error in checkBlockedDatesInRange:', error);
+    return { hasBlockedDates: false, error };
+  }
+};
+
+/**
+ * Check vehicle availability for a date range (bookings only)
+ * Note: This only checks bookings, not blocked dates (to avoid double-checking)
  */
 export const checkVehicleAvailability = async (
   vehicleId: string,
@@ -333,23 +508,30 @@ export const checkVehicleAvailability = async (
   endDate: string
 ): Promise<{ available: VehicleAvailability; error: any }> => {
   try {
+    // Convert dates to DATE format (remove time component) for proper comparison
+    const startDateOnly = startDate.split('T')[0];
+    const endDateOnly = endDate.split('T')[0];
+
     // Check if there are any overlapping bookings
-    const { data: bookings, error } = await supabase
+    // Using proper date comparison: bookings overlap if start_date <= endDate AND end_date >= startDate
+    const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
-      .select('id, start_date, end_date, status')
+      .select('id')
       .eq('car_id', vehicleId)
       .in('status', ['pending', 'confirmed', 'active', 'in_progress'])
-      .or(`start_date.lte.${endDate},end_date.gte.${startDate}`);
+      .lte('start_date', endDateOnly)
+      .gte('end_date', startDateOnly)
+      .limit(1); // Only need to know if any exist
 
-    if (error) {
-      console.error('Error checking vehicle availability:', error);
+    if (bookingsError) {
+      console.error('Error checking vehicle availability (bookings):', bookingsError);
       return {
         available: { isAvailable: false },
-        error,
+        error: bookingsError,
       };
     }
 
-    // If there are conflicting bookings, vehicle is not available
+    // Vehicle is available if there are no conflicting bookings
     const isAvailable = !bookings || bookings.length === 0;
 
     return {
@@ -362,6 +544,126 @@ export const checkVehicleAvailability = async (
       available: { isAvailable: false },
       error,
     };
+  }
+};
+
+/**
+ * Get all blocked dates for a vehicle
+ */
+export const getBlockedDates = async (vehicleId: string): Promise<{ blockedDates: BlockedDate[]; error: any }> => {
+  try {
+    const { data, error } = await supabase
+      .from('vehicle_blocked_dates')
+      .select('*')
+      .eq('vehicle_id', vehicleId)
+      .order('blocked_date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching blocked dates:', error);
+      return { blockedDates: [], error };
+    }
+
+    const blockedDates = (data || []).map((bd: any) => ({
+      id: bd.id,
+      vehicle_id: bd.vehicle_id,
+      blocked_date: bd.blocked_date,
+      reason: bd.reason || 'manual',
+      note: bd.note || undefined,
+      created_at: bd.created_at,
+      created_by: bd.created_by || undefined,
+    }));
+
+    return { blockedDates, error: null };
+  } catch (error: any) {
+    console.error('Error in getBlockedDates:', error);
+    return { blockedDates: [], error };
+  }
+};
+
+/**
+ * Block dates for a vehicle
+ */
+export const blockDates = async (
+  vehicleId: string,
+  dates: string[],
+  reason: 'maintenance' | 'manual' | 'other' = 'manual',
+  note?: string
+): Promise<{ blockedDates: BlockedDate[]; error: any }> => {
+  try {
+    // Get current user ID
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return {
+        blockedDates: [],
+        error: new Error('User not authenticated'),
+      };
+    }
+
+    // Prepare data for insertion
+    const blockedDatesData = dates.map(date => ({
+      vehicle_id: vehicleId,
+      blocked_date: date,
+      reason,
+      note: note || null,
+      created_by: user.id,
+    }));
+
+    // Insert blocked dates (ignore duplicates due to UNIQUE constraint)
+    const { data, error } = await supabase
+      .from('vehicle_blocked_dates')
+      .insert(blockedDatesData)
+      .select();
+
+    if (error) {
+      console.error('Error blocking dates:', error);
+      // If error is due to duplicate, try to fetch existing dates
+      if (error.code === '23505') {
+        const { blockedDates } = await getBlockedDates(vehicleId);
+        return { blockedDates, error: null };
+      }
+      return { blockedDates: [], error };
+    }
+
+    const blockedDates = (data || []).map((bd: any) => ({
+      id: bd.id,
+      vehicle_id: bd.vehicle_id,
+      blocked_date: bd.blocked_date,
+      reason: bd.reason || 'manual',
+      note: bd.note || undefined,
+      created_at: bd.created_at,
+      created_by: bd.created_by || undefined,
+    }));
+
+    return { blockedDates, error: null };
+  } catch (error: any) {
+    console.error('Error in blockDates:', error);
+    return { blockedDates: [], error };
+  }
+};
+
+/**
+ * Unblock dates for a vehicle
+ */
+export const unblockDates = async (
+  vehicleId: string,
+  dateIds: string[]
+): Promise<{ error: any }> => {
+  try {
+    const { error } = await supabase
+      .from('vehicle_blocked_dates')
+      .delete()
+      .eq('vehicle_id', vehicleId)
+      .in('id', dateIds);
+
+    if (error) {
+      console.error('Error unblocking dates:', error);
+      return { error };
+    }
+
+    return { error: null };
+  } catch (error: any) {
+    console.error('Error in unblockDates:', error);
+    return { error };
   }
 };
 

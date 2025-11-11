@@ -45,18 +45,32 @@ export const updateProfile = async (
   updates: Partial<ProfileData>
 ): Promise<{ profile: ProfileData | null; error: any }> => {
   try {
+    // Filter out undefined values to avoid updating fields to null
+    const cleanUpdates: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+    
+    Object.keys(updates).forEach(key => {
+      const value = (updates as any)[key];
+      if (value !== undefined && value !== null) {
+        cleanUpdates[key] = value;
+      }
+    });
+
     const { data, error } = await supabase
       .from('profiles')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+      .update(cleanUpdates)
       .eq('id', userId)
       .select()
       .single();
 
     if (error) {
+      console.error('Profile update error:', error);
       return { profile: null, error };
+    }
+
+    if (!data) {
+      return { profile: null, error: { message: 'No data returned from update' } };
     }
 
     return { profile: data as ProfileData, error: null };

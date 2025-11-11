@@ -18,7 +18,7 @@ These secrets must be configured in Supabase Dashboard → Edge Functions → Se
 2. **RESEND_API_KEY**
    - **Type:** Secret (server-side only)
    - **Where to get:** https://resend.com/api-keys
-   - **Value:** `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB` (from env template)
+   - **Value:** `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` (get from Resend dashboard)
    - **Used by:** `process-email-queue`, `send-email`, `send-event-email`
 
 3. **SUPABASE_URL**

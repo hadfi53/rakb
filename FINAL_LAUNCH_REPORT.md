@@ -115,7 +115,7 @@ RAKB platform has been thoroughly audited, secured, and optimized for public lau
 
 **Status:** ✅ **CONFIGURED**
 
-- ✅ API Key: `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB`
+- ✅ API Key: `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 - ✅ Configured in Supabase Edge Function secrets
 - ✅ Contact form sends emails successfully
 - ✅ Booking confirmation emails ready

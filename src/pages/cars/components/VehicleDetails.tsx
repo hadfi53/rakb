@@ -18,7 +18,12 @@ const VehicleDetails = ({ year, price, onYearChange, onPriceChange }: VehicleDet
           type="number"
           placeholder="ex: 2020"
           value={year}
-          onChange={(e) => onYearChange(e.target.value)}
+          onChange={(e) => {
+            if (import.meta.env.DEV) {
+              console.log('🔍 [VehicleDetails] Year onChange called with:', e.target.value);
+            }
+            onYearChange(e.target.value);
+          }}
           required
         />
       </div>
@@ -32,7 +37,12 @@ const VehicleDetails = ({ year, price, onYearChange, onPriceChange }: VehicleDet
             placeholder="ex: 250"
             className="pl-10"
             value={price}
-            onChange={(e) => onPriceChange(e.target.value)}
+            onChange={(e) => {
+              if (import.meta.env.DEV) {
+                console.log('🔍 [VehicleDetails] Price onChange called with:', e.target.value);
+              }
+              onPriceChange(e.target.value);
+            }}
             required
           />
         </div>

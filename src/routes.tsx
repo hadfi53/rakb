@@ -94,12 +94,13 @@ function AppRoutes() {
         <Route path="/notifications" element={<RoleRoute allowedRoles={['renter', 'owner', 'admin']}><Notifications /></RoleRoute>} />
         <Route path="/favorites" element={<RoleRoute allowedRoles={['renter', 'owner', 'admin']}><Favorites /></RoleRoute>} />
         <Route path="/cars/add" element={<RoleRoute allowedRoles={['owner']}><AddCar /></RoleRoute>} />
+        <Route path="/cars/search" element={<SearchResults />} />
         <Route path="/cars/:id/edit" element={<RoleRoute allowedRoles={['owner']}><EditCar /></RoleRoute>} />
         <Route path="/cars/:id/availability" element={<RoleRoute allowedRoles={['owner']}><VehicleAvailability /></RoleRoute>} />
         <Route path="/cars/:id/stats" element={<RoleRoute allowedRoles={['owner']}><VehicleStats /></RoleRoute>} />
         <Route path="/cars/:id/reviews" element={<VehicleReviews />} />
-        <Route path="/cars/:id" element={<CarDetail />} />
         <Route path="/cars/:id/reserve" element={<ReservationPage />} />
+        <Route path="/cars/:id" element={<CarDetail />} />
         <Route path="/before-owner" element={<BeforeOwner />} />
         <Route path="/become-owner" element={<BecomeOwner />} />
         <Route path="/how-it-works" element={<HowItWorks />} />

@@ -8,7 +8,7 @@ Le compte administrateur a été créé dans votre base Supabase.
 
 ```
 📧 Email    : rakb@rakb.ma
-🔑 Password : Rakb@2025
+🔑 Password : [SET IN SUPABASE DASHBOARD - DO NOT COMMIT]
 ```
 
 ## ✅ Statut du Compte
@@ -31,7 +31,7 @@ Le compte administrateur a été créé dans votre base Supabase.
 1. Allez sur `/auth/login` ou `/login`
 2. Entrez:
    - Email: `rakb@rakb.ma`
-   - Password: `Rakb@2025`
+   - Password: [Set in Supabase Dashboard]
 3. Cliquez sur "Se connecter"
 
 ### 2. Accéder aux Pages Admin
