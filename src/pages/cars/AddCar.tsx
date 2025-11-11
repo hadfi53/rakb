@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -184,16 +184,84 @@ const AddCar = () => {
     loadExistingDocuments();
   }, [user]);
 
+  // Debug: Monitor formData changes
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [useEffect] formData changed:', JSON.stringify({
+        brand: formData.brand,
+        model: formData.model,
+        year: formData.year,
+        registration_number: formData.registration_number,
+        price_per_day: formData.price_per_day
+      }, null, 2));
+    }
+  }, [formData.brand, formData.model, formData.year, formData.registration_number, formData.price_per_day]);
+
   const progress = (currentStep / 7) * 100;
+
+  // Stable callbacks for form updates
+  const handleBrandChange = useCallback((value: string) => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [handleBrandChange] Setting brand to:', value);
+    }
+    setFormData(prev => ({ ...prev, brand: value }));
+  }, []);
+
+  const handleModelChange = useCallback((value: string) => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [handleModelChange] Setting model to:', value);
+    }
+    setFormData(prev => ({ ...prev, model: value }));
+  }, []);
+
+  const handleYearChange = useCallback((value: string) => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [handleYearChange] Setting year to:', value);
+    }
+    setFormData(prev => ({ ...prev, year: value }));
+  }, []);
+
+  const handlePriceChange = useCallback((value: string) => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [handlePriceChange] Setting price_per_day to:', value);
+    }
+    setFormData(prev => ({ ...prev, price_per_day: value }));
+  }, []);
+
+  const handleRegistrationChange = useCallback((value: string) => {
+    if (import.meta.env.DEV) {
+      console.log('🔍 [handleRegistrationChange] Setting registration_number to:', value);
+    }
+    setFormData(prev => ({ ...prev, registration_number: value.toUpperCase() }));
+  }, []);
 
   const validateStep = (step: VehicleStep): boolean => {
     switch (step) {
       case 1:
+        if (import.meta.env.DEV) {
+          console.log('🔍 [validateStep] Validating step 1 with formData:', JSON.stringify({
+            brand: formData.brand,
+            model: formData.model,
+            year: formData.year,
+            registration_number: formData.registration_number
+          }, null, 2));
+          console.log('🔍 [validateStep] Full formData:', JSON.stringify(formData, null, 2));
+        }
         if (!formData.brand || !formData.model || !formData.year || !formData.registration_number) {
+          const missingFields = [];
+          if (!formData.brand) missingFields.push('Marque');
+          if (!formData.model) missingFields.push('Modèle');
+          if (!formData.year) missingFields.push('Année');
+          if (!formData.registration_number) missingFields.push('Numéro d\'immatriculation');
+          
+          if (import.meta.env.DEV) {
+            console.warn('❌ [validateStep] Missing fields:', missingFields);
+          }
+          
           toast({
             variant: "destructive",
             title: "Informations incomplètes",
-            description: "Veuillez remplir tous les champs obligatoires",
+            description: `Veuillez remplir tous les champs obligatoires. Champs manquants: ${missingFields.join(', ')}`,
           });
           return false;
         }
@@ -534,14 +602,14 @@ const AddCar = () => {
                   <VehicleBasicInfo
                     brand={formData.brand}
                     model={formData.model}
-                    onBrandChange={(value) => setFormData({ ...formData, brand: value })}
-                    onModelChange={(value) => setFormData({ ...formData, model: value })}
+                    onBrandChange={handleBrandChange}
+                    onModelChange={handleModelChange}
                   />
                   <VehicleDetails
                     year={formData.year}
                     price={formData.price_per_day}
-                    onYearChange={(value) => setFormData({ ...formData, year: value })}
-                    onPriceChange={(value) => setFormData({ ...formData, price_per_day: value })}
+                    onYearChange={handleYearChange}
+                    onPriceChange={handlePriceChange}
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -553,7 +621,7 @@ const AddCar = () => {
                       type="text"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                       value={formData.registration_number}
-                      onChange={(e) => setFormData({ ...formData, registration_number: e.target.value.toUpperCase() })}
+                      onChange={(e) => handleRegistrationChange(e.target.value)}
                       placeholder="Ex: 12345-A-67"
                       required
                     />

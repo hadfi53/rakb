@@ -1,0 +1,172 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: L'application RAKB sera bientôt disponible pour iPhone et Android
+      - banner [ref=e11]:
+        - generic [ref=e12]:
+          - link "RAKB" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e14]: RAKB
+          - generic [ref=e15]:
+            - button "Pour les agences" [ref=e16] [cursor=pointer]:
+              - img
+              - text: Pour les agences
+            - button [ref=e17] [cursor=pointer]:
+              - img
+            - button "TT" [ref=e18] [cursor=pointer]:
+              - generic [ref=e20]: TT
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - link "Retour aux détails du véhicule" [ref=e25] [cursor=pointer]:
+          - /url: /cars/81671d03-1cb0-40ff-b10d-d070f3c7f352
+          - img [ref=e26]
+          - text: Retour aux détails du véhicule
+        - generic [ref=e29]:
+          - heading "Avis et évaluations" [level=1] [ref=e30]
+          - paragraph [ref=e31]: Test Car 0
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e40]: "5.0"
+          - paragraph [ref=e41]: 1 avis
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: Distribution
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]: 5 étoiles
+              - generic [ref=e50]: "1"
+            - generic [ref=e51]:
+              - generic [ref=e52]: 4 étoiles
+              - generic [ref=e54]: "0"
+            - generic [ref=e55]:
+              - generic [ref=e56]: 3 étoiles
+              - generic [ref=e58]: "0"
+            - generic [ref=e59]:
+              - generic [ref=e60]: 2 étoiles
+              - generic [ref=e62]: "0"
+            - generic [ref=e63]:
+              - generic [ref=e64]: 1 étoiles
+              - generic [ref=e66]: "0"
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e73]: TT
+            - generic [ref=e74]:
+              - paragraph [ref=e75]: Test Tenant
+              - paragraph [ref=e76]: 11 novembre 2025
+          - generic [ref=e77]:
+            - button [disabled] [ref=e78]:
+              - img [ref=e79]
+              - img [ref=e81]
+            - button [disabled] [ref=e83]:
+              - img [ref=e84]
+              - img [ref=e86]
+            - button [disabled] [ref=e88]:
+              - img [ref=e89]
+              - img [ref=e91]
+            - button [disabled] [ref=e93]:
+              - img [ref=e94]
+              - img [ref=e96]
+            - button [disabled] [ref=e98]:
+              - img [ref=e99]
+              - img [ref=e101]
+        - paragraph [ref=e103]: Great car, very clean and well maintained! Excellent service and communication.
+    - contentinfo [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - heading "À propos" [level=3] [ref=e108]
+            - list [ref=e109]:
+              - listitem [ref=e110]:
+                - link "Qui sommes-nous" [ref=e111] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e112]:
+                - link "Comment ça marche" [ref=e113] [cursor=pointer]:
+                  - /url: /how-it-works
+              - listitem [ref=e114]:
+                - link "Blog" [ref=e115] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e116]:
+            - heading "Location" [level=3] [ref=e117]
+            - list [ref=e118]:
+              - listitem [ref=e119]:
+                - link "Louer une voiture" [ref=e120] [cursor=pointer]:
+                  - /url: /rent
+              - listitem [ref=e121]:
+                - link "Assurance" [ref=e122] [cursor=pointer]:
+                  - /url: /legal/insurance
+              - listitem [ref=e123]:
+                - link "Aide" [ref=e124] [cursor=pointer]:
+                  - /url: /help
+          - generic [ref=e125]:
+            - heading "Agences" [level=3] [ref=e126]
+            - list [ref=e127]:
+              - listitem [ref=e128]:
+                - link "Rejoindre en tant qu'agence" [ref=e129] [cursor=pointer]:
+                  - /url: /become-owner
+              - listitem [ref=e130]:
+                - link "Tarifs" [ref=e131] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e132]:
+                - link "Guide" [ref=e133] [cursor=pointer]:
+                  - /url: /guide
+          - generic [ref=e134]:
+            - heading "Support" [level=3] [ref=e135]
+            - list [ref=e136]:
+              - listitem [ref=e137]:
+                - link "Contact" [ref=e138] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e139]:
+                - link "FAQ" [ref=e140] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e141]:
+                - link "Urgence" [ref=e142] [cursor=pointer]:
+                  - /url: /emergency
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - heading "Contactez-nous" [level=4] [ref=e146]
+            - generic [ref=e147]:
+              - link "contact@rakb.ma" [ref=e148] [cursor=pointer]:
+                - /url: mailto:contact@rakb.ma
+                - img [ref=e149]
+                - generic [ref=e152]: contact@rakb.ma
+              - link "+212 6 00 00 00 00" [ref=e153] [cursor=pointer]:
+                - /url: tel:+212600000000
+                - img [ref=e154]
+                - generic [ref=e156]: +212 6 00 00 00 00
+              - generic [ref=e157]:
+                - img [ref=e158]
+                - generic [ref=e161]: Casablanca, Maroc
+          - generic [ref=e162]:
+            - heading "Suivez-nous" [level=4] [ref=e163]
+            - generic [ref=e164]:
+              - link "Facebook" [ref=e165] [cursor=pointer]:
+                - /url: https://facebook.com/rakb.ma
+                - img [ref=e166]
+              - link "Twitter" [ref=e168] [cursor=pointer]:
+                - /url: https://twitter.com/rakb_ma
+                - img [ref=e169]
+              - link "Instagram" [ref=e171] [cursor=pointer]:
+                - /url: https://instagram.com/rakb.ma
+                - img [ref=e172]
+              - link "LinkedIn" [ref=e176] [cursor=pointer]:
+                - /url: https://linkedin.com/company/rakb
+                - img [ref=e177]
+        - generic [ref=e182]:
+          - paragraph [ref=e183]: © 2025 RAKB. Tous droits réservés.
+          - generic [ref=e184]:
+            - link "Confidentialité" [ref=e185] [cursor=pointer]:
+              - /url: /legal/privacy
+            - link "Mentions légales" [ref=e186] [cursor=pointer]:
+              - /url: /legal
+            - link "Assurance" [ref=e187] [cursor=pointer]:
+              - /url: /legal/insurance
+```

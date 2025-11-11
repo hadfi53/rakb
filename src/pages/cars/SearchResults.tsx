@@ -112,9 +112,20 @@ const SearchResults = () => {
     // Expect format: start|end (each may contain time with colon)
     const parts = datesParam.split("|");
     if (parts.length === 2) {
-      startDate = parts[0];
-      endDate = parts[1];
+      // Extract just the date part (YYYY-MM-DD) from YYYY-MM-DDTHH:MM format
+      startDate = parts[0].split('T')[0];
+      endDate = parts[1].split('T')[0];
     }
+  }
+
+  // Debug logging in development
+  if (import.meta.env.DEV) {
+    console.log('🔍 [SearchResults] Search parameters:', {
+      location,
+      startDate,
+      endDate,
+      datesParam
+    });
   }
   
   // Use our custom hook for vehicle search

@@ -53,7 +53,7 @@ cp FINAL_ENV_TEMPLATE.env.example .env
 ### Step 3: Configure Supabase Secrets (5 min)
 In Supabase Dashboard → Edge Functions → Secrets:
 ```
-RESEND_API_KEY=re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_EMAIL=contact@rakb.ma
 STRIPE_SECRET_KEY=sk_test_... (your test key)
 SUPABASE_URL=https://kcujctyosmjlofppntfb.supabase.co
@@ -129,7 +129,7 @@ Follow `FINAL_CHECKLIST.md` for complete verification
 
 ## 📧 Email Service
 
-- ✅ Resend API key configured: `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB`
+- ✅ Resend API key configured: `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 - ✅ Contact form sends emails
 - ✅ Booking notifications ready
 - ✅ Email templates formatted

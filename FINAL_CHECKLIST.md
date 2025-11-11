@@ -30,7 +30,7 @@ npm run dev
 
 Configure in Supabase Dashboard → Edge Functions → Secrets:
 
-- [ ] `RESEND_API_KEY` = `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB`
+- [ ] `RESEND_API_KEY` = `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 - [ ] `CONTACT_EMAIL` = `contact@rakb.ma`
 - [ ] `STRIPE_SECRET_KEY` = `sk_test_...` (test mode)
 - [ ] `SUPABASE_URL` = your Supabase URL

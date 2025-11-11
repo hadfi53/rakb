@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockProfileApi, MockProfile, MockDocument } from '@/lib/mock-profile-data';
+// Removed mockProfileApi import - using real backend API instead
 import {
   Card,
   CardContent,
@@ -38,6 +38,7 @@ import { useProfile } from '@/hooks/use-profile';
 import { useTheme } from '@/contexts/ThemeContext';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import * as profilesBackend from '@/lib/backend/profiles';
 
 interface ExtendedAddress extends Address {
   street: string;
@@ -192,15 +193,47 @@ const Profile = () => {
         return;
       }
 
-      // Mise à jour du profil avec mock data
-      await mockProfileApi.updateProfile(user.id, {
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        phone: profile.phone,
-        birthdate: profile.birthdate,
-        address: profile.address,
-        notification_preferences: profile.notification_preferences
-      });
+      // Update profile using real backend API
+      // Only send fields that exist in the ProfileData interface
+      const updateData: any = {
+        first_name: profile.first_name || null,
+        last_name: profile.last_name || null,
+      };
+
+      // Add phone_number if it exists (the table uses phone_number, not phone)
+      if (profile.phone) {
+        updateData.phone_number = profile.phone;
+      }
+
+      const { profile: updatedProfile, error } = await profilesBackend.updateProfile(user.id, updateData);
+
+      if (error) {
+        console.error('Profile update error:', error);
+        throw error;
+      }
+
+      if (!updatedProfile) {
+        throw new Error('Failed to update profile - no profile returned');
+      }
+
+      // Reload profile data to reflect the changes
+      const refreshedProfile = await getProfile();
+      if (refreshedProfile) {
+        setProfile(prev => ({
+          ...prev,
+          ...refreshedProfile,
+          address: {
+            street: refreshedProfile.address?.street ?? prev.address?.street ?? '',
+            city: refreshedProfile.address?.city ?? prev.address?.city ?? '',
+            postal_code: refreshedProfile.address?.postal_code ?? prev.address?.postal_code ?? '',
+            country: refreshedProfile.address?.country ?? prev.address?.country ?? 'MA'
+          },
+          notification_preferences: {
+            email: refreshedProfile.notification_preferences?.email ?? prev.notification_preferences?.email ?? true,
+            push: refreshedProfile.notification_preferences?.push ?? prev.notification_preferences?.push ?? true
+          },
+        }));
+      }
 
       toast({
         title: "Succès",

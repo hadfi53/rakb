@@ -4,14 +4,14 @@
 
 ### Option 1 : Compte existant (déjà configuré comme owner)
 ```
-📧 Email    : hhadfi53@gmail.com
-🔑 Password : Bmx4ever
+📧 Email    : [SET YOUR EMAIL]
+🔑 Password : [SET IN SUPABASE DASHBOARD - DO NOT COMMIT]
 ```
 
 ### Option 2 : Nouveau compte agence (à créer avec le script)
 ```
 📧 Email    : agency@rakeb.test
-🔑 Password : Agency123!
+🔑 Password : [SET IN SUPABASE DASHBOARD - DO NOT COMMIT]
 ```
 
 ## 🚀 Créer un compte agence

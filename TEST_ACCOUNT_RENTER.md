@@ -8,7 +8,7 @@ Un compte de test pour louer des voitures a été créé dans votre base Supabas
 
 ```
 📧 Email    : test-renter@rakb.test
-🔑 Password : TestRenter123!
+🔑 Password : [SET IN SUPABASE DASHBOARD - DO NOT COMMIT]
 ```
 
 ## ✅ Statut du Compte
@@ -25,7 +25,7 @@ Un compte de test pour louer des voitures a été créé dans votre base Supabas
 1. Allez sur `/auth/login` ou `/login`
 2. Entrez:
    - Email: `test-renter@rakb.test`
-   - Password: `TestRenter123!`
+   - Password: [Set in Supabase Dashboard]
 3. Cliquez sur "Se connecter"
 
 ### 2. Tester le Flux de Location

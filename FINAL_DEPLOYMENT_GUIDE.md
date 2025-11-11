@@ -38,7 +38,7 @@ VITE_APP_NAME=RAKB
 In Supabase Dashboard → Edge Functions → Secrets, configure:
 
 ```bash
-RESEND_API_KEY=re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_EMAIL=contact@rakb.ma
 STRIPE_SECRET_KEY=sk_test_... # Test mode
 SUPABASE_URL=https://kcujctyosmjlofppntfb.supabase.co

@@ -287,7 +287,7 @@ Visit `https://rakb.ma` and verify:
    STRIPE_SECRET_KEY=sk_live_... (or sk_test_... for testing)
    SUPABASE_URL=https://kcujctyosmjlofppntfb.supabase.co
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   RESEND_API_KEY=re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB
+   RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    CONTACT_EMAIL=contact@rakb.ma
    ```
 

@@ -45,7 +45,7 @@ Once functions are deployed, set secrets:
 
 ```bash
 # Set secrets
-supabase secrets set RESEND_API_KEY=re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB --project-ref kcujctyosmjlofppntfb
+supabase secrets set RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --project-ref kcujctyosmjlofppntfb
 supabase secrets set SUPABASE_URL=https://kcujctyosmjlofppntfb.supabase.co --project-ref kcujctyosmjlofppntfb
 supabase secrets set VITE_APP_URL=https://rakb.ma --project-ref kcujctyosmjlofppntfb
 supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your_service_role_key --project-ref kcujctyosmjlofppntfb

@@ -11,8 +11,18 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar as CalendarIcon, X, Wrench, Lock, Unlock, Download } from "lucide-react";
 import { format, eachDayOfInterval, isSameDay, isBefore, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
-import { mockAvailabilityApi, BlockedDate } from "@/lib/mock-availability-data";
-import { mockBookingApi } from "@/lib/mock-booking-data";
+import { getBlockedDates, blockDates, unblockDates, BlockedDate as BackendBlockedDate } from "@/lib/backend/vehicles";
+import { getOwnerBookings } from "@/lib/backend/bookings";
+
+// Local interface for blocked dates (matches component expectations)
+interface BlockedDate {
+  id: string;
+  vehicle_id: string;
+  date: string; // ISO date string (YYYY-MM-DD)
+  reason?: 'maintenance' | 'manual' | 'other';
+  note?: string;
+  created_at: string;
+}
 import {
   Dialog,
   DialogContent,
@@ -98,33 +108,54 @@ const VehicleAvailability = () => {
       if (!id) return;
 
       try {
-        // Load blocked dates
-        const blocked = await mockAvailabilityApi.getBlockedDates(id);
-        setBlockedDates(blocked);
+        // Load blocked dates from Supabase
+        const { blockedDates, error: blockedError } = await getBlockedDates(id);
+        if (blockedError) {
+          console.error("Error loading blocked dates:", blockedError);
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Impossible de charger les dates bloquées",
+          });
+        } else {
+          // Map BlockedDate from backend to the format expected by the component
+          const mappedBlockedDates = blockedDates.map(bd => ({
+            id: bd.id,
+            vehicle_id: bd.vehicle_id,
+            date: bd.blocked_date, // blocked_date is already in YYYY-MM-DD format
+            reason: bd.reason || 'manual',
+            note: bd.note,
+            created_at: bd.created_at,
+          }));
+          setBlockedDates(mappedBlockedDates);
+        }
 
         // Load bookings for this vehicle
-        // Note: mockBookingApi doesn't have getVehicleBookings, so we simulate
         if (user?.id) {
           try {
-            const allBookings = await mockBookingApi.getOwnerBookings(user.id);
-            const vehicleBookings = allBookings.filter(b => b.vehicle_id === id);
-            
-            const booked: string[] = [];
-            vehicleBookings.forEach(booking => {
-              try {
-                const start = new Date(booking.start_date);
-                const end = new Date(booking.end_date);
-                if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-                  const days = eachDayOfInterval({ start, end });
-                  days.forEach(day => {
-                    booked.push(format(day, 'yyyy-MM-dd'));
-                  });
+            const { bookings, error: bookingsError } = await getOwnerBookings(user.id);
+            if (bookingsError) {
+              console.error("Error loading bookings:", bookingsError);
+            } else {
+              const vehicleBookings = bookings.filter(b => b.car_id === id || b.vehicle_id === id);
+              
+              const booked: string[] = [];
+              vehicleBookings.forEach(booking => {
+                try {
+                  const start = new Date(booking.start_date);
+                  const end = new Date(booking.end_date);
+                  if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+                    const days = eachDayOfInterval({ start, end });
+                    days.forEach(day => {
+                      booked.push(format(day, 'yyyy-MM-dd'));
+                    });
+                  }
+                } catch (err) {
+                  console.error("Error processing booking dates:", err);
                 }
-              } catch (err) {
-                console.error("Error processing booking dates:", err);
-              }
-            });
-            setBookedDates(booked);
+              });
+              setBookedDates(booked);
+            }
           } catch (err) {
             console.error("Error loading bookings:", err);
             // Continue without bookings if error
@@ -183,11 +214,28 @@ const VehicleAvailability = () => {
 
     try {
       const dateStrings = selectedDates.map(d => format(d, 'yyyy-MM-dd'));
-      await mockAvailabilityApi.blockDates(id!, dateStrings, blockReason, blockNote);
+      const { blockedDates: newBlockedDates, error } = await blockDates(id!, dateStrings, blockReason, blockNote);
+      
+      if (error) {
+        throw error;
+      }
       
       // Reload blocked dates
-      const blocked = await mockAvailabilityApi.getBlockedDates(id!);
-      setBlockedDates(blocked);
+      const { blockedDates: allBlockedDates, error: reloadError } = await getBlockedDates(id!);
+      if (reloadError) {
+        console.error("Error reloading blocked dates:", reloadError);
+      } else {
+        // Map BlockedDate from backend to the format expected by the component
+        const mappedBlockedDates = allBlockedDates.map(bd => ({
+          id: bd.id,
+          vehicle_id: bd.vehicle_id,
+          date: bd.blocked_date,
+          reason: bd.reason || 'manual',
+          note: bd.note,
+          created_at: bd.created_at,
+        }));
+        setBlockedDates(mappedBlockedDates);
+      }
 
       toast({
         title: "Dates bloquées",
@@ -209,11 +257,28 @@ const VehicleAvailability = () => {
 
   const handleUnblockDates = async (blockIds: string[]) => {
     try {
-      await mockAvailabilityApi.unblockDates(id!, blockIds);
+      const { error } = await unblockDates(id!, blockIds);
+      
+      if (error) {
+        throw error;
+      }
       
       // Reload blocked dates
-      const blocked = await mockAvailabilityApi.getBlockedDates(id!);
-      setBlockedDates(blocked);
+      const { blockedDates: allBlockedDates, error: reloadError } = await getBlockedDates(id!);
+      if (reloadError) {
+        console.error("Error reloading blocked dates:", reloadError);
+      } else {
+        // Map BlockedDate from backend to the format expected by the component
+        const mappedBlockedDates = allBlockedDates.map(bd => ({
+          id: bd.id,
+          vehicle_id: bd.vehicle_id,
+          date: bd.blocked_date,
+          reason: bd.reason || 'manual',
+          note: bd.note,
+          created_at: bd.created_at,
+        }));
+        setBlockedDates(mappedBlockedDates);
+      }
 
       toast({
         title: "Dates débloquées",

@@ -165,7 +165,7 @@ curl -X POST https://kcujctyosmjlofppntfb.supabase.co/functions/v1/send-event-em
 2. Verify `RESEND_API_KEY` is set
 3. If missing, add it:
    - Key: `RESEND_API_KEY`
-   - Value: `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB`
+   - Value: `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 4. Redeploy function:
    ```bash
    supabase functions deploy send-event-email --project-ref kcujctyosmjlofppntfb

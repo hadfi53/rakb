@@ -52,7 +52,7 @@ supabase functions deploy contact-form
 In Supabase Dashboard → Edge Functions → Secrets:
 
 ```bash
-RESEND_API_KEY=re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 SUPABASE_URL=https://kcujctyosmjlofppntfb.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 VITE_APP_URL=https://rakb.ma

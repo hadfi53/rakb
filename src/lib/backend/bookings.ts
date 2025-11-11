@@ -494,9 +494,9 @@ export const updateBookingStatus = async (
       .eq('id', bookingId)
       .select(`
         *,
-        vehicle:vehicles(*),
-        renter:profiles!renter_id(*),
-        owner:profiles!owner_id(*)
+        car:cars(*),
+        renter:profiles!user_id(*),
+        host:profiles!host_id(*)
       `)
       .single();
 
@@ -515,36 +515,40 @@ export const updateBookingStatus = async (
       is_read: false,
     });
 
+    const car = data.car || data.vehicle;
+    const host = data.host || data.owner;
+    const renter = data.renter;
+
     const formattedBooking: Booking = {
       id: data.id,
-      vehicle_id: data.vehicle_id,
-      renter_id: data.renter_id,
-      owner_id: data.owner_id,
+      vehicle_id: data.car_id || data.vehicle_id, // Map car_id to vehicle_id
+      renter_id: data.user_id || data.renter_id, // Map user_id to renter_id
+      owner_id: data.host_id || data.owner_id, // Map host_id to owner_id
       start_date: data.start_date,
       end_date: data.end_date,
       status: data.status as BookingStatus,
-      total_price: data.total_price,
+      total_price: data.total_amount || data.total_price,
       pickup_location: data.pickup_location,
       created_at: data.created_at,
       updated_at: data.updated_at,
-      vehicle: data.vehicle
+      vehicle: car
         ? {
-            id: data.vehicle.id,
-            make: data.vehicle.make,
-            model: data.vehicle.model,
-            year: data.vehicle.year,
-            images: data.vehicle.images || [],
-            price_per_day: data.vehicle.price_per_day,
-            location: data.vehicle.location,
+            id: car.id,
+            make: car.make || car.brand,
+            model: car.model,
+            year: car.year,
+            images: car.images || [],
+            price_per_day: car.price_per_day,
+            location: car.location,
           }
         : undefined,
-      owner: data.owner
+      owner: host
         ? {
-            id: data.owner.id,
-            first_name: data.owner.first_name || '',
-            last_name: data.owner.last_name || '',
-            email: data.owner.email || '',
-            phone: data.owner.phone || '',
+            id: host.id,
+            first_name: host.first_name || '',
+            last_name: host.last_name || '',
+            email: host.email || '',
+            phone: host.phone_number || host.phone || '',
           }
         : undefined,
     };

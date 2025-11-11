@@ -20,7 +20,12 @@ const VehicleBasicInfo = ({ brand, model, onBrandChange, onModelChange }: Vehicl
             placeholder="ex: Toyota"
             className="pl-10"
             value={brand}
-            onChange={(e) => onBrandChange(e.target.value)}
+            onChange={(e) => {
+              if (import.meta.env.DEV) {
+                console.log('🔍 [VehicleBasicInfo] Brand onChange called with:', e.target.value);
+              }
+              onBrandChange(e.target.value);
+            }}
             required
           />
         </div>
@@ -34,7 +39,12 @@ const VehicleBasicInfo = ({ brand, model, onBrandChange, onModelChange }: Vehicl
             placeholder="ex: Corolla"
             className="pl-10"
             value={model}
-            onChange={(e) => onModelChange(e.target.value)}
+            onChange={(e) => {
+              if (import.meta.env.DEV) {
+                console.log('🔍 [VehicleBasicInfo] Model onChange called with:', e.target.value);
+              }
+              onModelChange(e.target.value);
+            }}
             required
           />
         </div>

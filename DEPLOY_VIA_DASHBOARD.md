@@ -104,7 +104,7 @@ Once functions are deployed:
 **If secrets are missing:**
 - Click "Add Secret"
 - Key: `RESEND_API_KEY`
-- Value: `re_9Q24cFrs_JrdqYVHrFj69pvotjjUvbmxB`
+- Value: `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 - Click "Save"
 
 ---
